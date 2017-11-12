@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+
+<!--título de web, metas, dependencias CSS/JS-->
+<head th:include="fragments/header :: header">
+</head>
+
+<body>
+    <div class="main-panel"  style="float: unset;width: 100%;background-image:  /*url(../static/img/sidebar-1.jpg)*/ ;background-size: cover;background-repeat: no-repeat;">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">                    
+                    <div class="col-md-offset-4 col-md-4 col-xs-12" >
+                        <div class="card card-profile">
+                            <div class="card-avatar">
+                                <a href="#pablo">
+                                    <img class="img" src="../static/img/faces/marc.jpg"  th:src="@{/img/faces/marc.jpg}"/>
+                                </a>
+                            </div>
+                            <div class="content">                                
+                                <h4 class="card-title">Login</h4>
+                                <p class="card-content">
+                                  <form class="login-form">
+                                        <div class="row">
+                                            <div class="col-md-10 col-md-offset-1">
+                                                <div class="form-group label-floating" style="text-align: center;">    
+                                                    <input type="text" class="form-control" placeholder="Username" required="">
+                                                </div>
+                                            </div>                                        
+                                        </div>
+
+                                        <div class="row">                                       
+                                            <div class="col-md-10 col-md-offset-1">
+                                                <div class="form-group label-floating">
+                                                    <input type="password" class="form-control" placeholder="password" required="">
+                                                </div>
+                                            </div>                                        
+                                        </div>
+
+                                        <input type="submit" id="btn-login" class="btn btn-primary btn-round" name="Ingresar" />
+                                    </form>
+  
+                                </p>
+                                <!--<a href="dashboard.html" class="btn btn-primary btn-round">Ingresar</a>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container-fluid">               
+                <p class="copyright pull-right">
+                    &copy;
+                    <script>
+                        document.write(new Date().getFullYear())
+                    </script>
+                    By Los Mens Team, PRO-DEVS
+                </p>
+            </div>
+        </footer>
+    </div>  
+    
+
+    <!--dependencias JS-->
+    <div th:replace="fragments/footer :: footer"></div>
+    <!--script para el login-->    
+    <script>
+        (function(){
+            $('.login-form').on('submit',(ev)=>{
+                ev.preventDefault();
+                let 
+                $.ajax({
+                    url:'/'
+                    data:
+                })
+            });
+        })();
+    </script>
+
+</body>
+</html>
