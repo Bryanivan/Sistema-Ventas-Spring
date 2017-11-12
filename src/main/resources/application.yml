@@ -1,8 +1,7 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/cyg
-    username: root       
-    password: admin 
+    url: jdbc:mysql://localhost:3306/sysgc
+    username: root           
     
   jpa:
     show-sql: true

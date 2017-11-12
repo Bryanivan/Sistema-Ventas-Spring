@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.carlos.sistemat3.modelo.Factura;
+
 import com.carlos.sistemat3.modelo.Response;
 import com.carlos.sistemat3.entidad.User;
 import com.carlos.sistemat3.entidad.Producto;
@@ -46,15 +46,15 @@ public class WebServiceController {
 	
 	
 	/**
-	 * Obtener todos los usuarios
-	 * @return listado de usuarios
+	 * Ingresar un nuevo usuario
+	 * @return status si ha sido exitoso o no
 	 * */
 	@PostMapping("/usuarios")
 	public Response addUsuario(@RequestParam(value="username",defaultValue="-1")String username,
 							   @RequestParam(value="password",defaultValue="-1")String password) {
 		if(username!="-1" && password!="-1") {
 			usuarioServicio.add(new User(username,password));			
-			return new Response<>(Response.STATUS_OK);
+			return new Response<>(Response.STATUS_OK,"El usuario ha sido registrado con éxito");
 		}
 		
 		return new Response<>(Response.STATUS_ERROR,"No se han ingresado los parámetros correctamente");
@@ -102,8 +102,13 @@ public class WebServiceController {
 	@GetMapping("/auth")
 	public Response login(@RequestParam(value="username",defaultValue="-1")String username,
 		      			  @RequestParam(value="password",defaultValue="-1")String password) {
+		
 		int exists=usuarioServicio.exists(username,password);
-		return new Response<>(Response.STATUS_OK,exists+"");
+		
+		if(exists!=0)//existe
+			return new Response<>(Response.STATUS_OK,"http://localhost:8080/web/dashboard");
+		
+		return new Response<>(Response.STATUS_ERROR,"El usuario no existe");
 	}
 	
 	/**
@@ -115,19 +120,7 @@ public class WebServiceController {
 		return productoServicio.all();
 	}
 	
-	/**
-	 * Obtener solo producto
-	 * @return objeto producto
-	 *
-	@GetMapping("/productos")
-	public Producto getProducto(@RequestParam(value="id",defaultValue="1")int id) {	
-		return productoServicio.get(id);
-	} */
-	
-	@PostMapping("/facturas")
-	public Factura getFacturas() {
-		return null;//new Factura(1,productos);
-	}
+
 	
 		
 }

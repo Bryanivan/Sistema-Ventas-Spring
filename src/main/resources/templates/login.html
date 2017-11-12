@@ -20,11 +20,11 @@
                             <div class="content">                                
                                 <h4 class="card-title">Login</h4>
                                 <p class="card-content">
-                                  <form class="login-form">
+                                  <form id="login-form">
                                         <div class="row">
                                             <div class="col-md-10 col-md-offset-1">
                                                 <div class="form-group label-floating" style="text-align: center;">    
-                                                    <input type="text" class="form-control" placeholder="Username" required="">
+                                                    <input type="text" class="form-control" id="txtUsername" placeholder="Username" required="">
                                                 </div>
                                             </div>                                        
                                         </div>
@@ -32,7 +32,7 @@
                                         <div class="row">                                       
                                             <div class="col-md-10 col-md-offset-1">
                                                 <div class="form-group label-floating">
-                                                    <input type="password" class="form-control" placeholder="password" required="">
+                                                    <input type="password" class="form-control" id="txtPassword" placeholder="password" required="">
                                                 </div>
                                             </div>                                        
                                         </div>
@@ -64,18 +64,43 @@
 
     <!--dependencias JS-->
     <div th:replace="fragments/footer :: footer"></div>
+    
     <!--script para el login-->    
     <script>
-        (function(){
-            $('.login-form').on('submit',(ev)=>{
-                ev.preventDefault();
-                let 
-                $.ajax({
-                    url:'/'
-                    data:
-                })
-            });
-        })();
+    	$('#login-form').on('submit',(evt)=>{
+    		//no cargue el evento submit por defecto
+    		evt.preventDefault();
+    		
+    		//obteniendo el usuario y contraseña
+    		var password=$('#txtPassword').val(),
+    			username=$('#txtUsername').val();
+    		
+    		
+    		var settings = {    				  
+    				  "url": "/auth",
+    				  "method": "GET",
+    				  //pasando los datos al api
+    				  "data":{	
+    					  username,
+    					  password
+    				  },
+    				  //obteniendo respuesta del servidor
+    				  success: (res)=>{
+    					  if(res.error==0)//login correcto
+    					  	window.location.href=res.message; //redireccionando al link
+    					  else{ //login es incorrecto
+    						//mostrar el mensaje de error
+    						  modal("Error",res.message);  
+    					  } 
+    					  	
+    				  }
+    				};
+
+			$.ajax(settings).done(function (response) {
+ 				  console.log(response);
+ 			});
+    		
+    	});  
     </script>
 
 </body>
