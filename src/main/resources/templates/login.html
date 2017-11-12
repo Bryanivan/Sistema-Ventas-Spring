@@ -86,13 +86,14 @@
     				  },
     				  //obteniendo respuesta del servidor
     				  success: (res)=>{
-    					  if(res.error==0)//login correcto
+    					  if(res.error==0){//login correcto
+                            localStorage.setItem('user',username);
     					  	window.location.href=res.message; //redireccionando al link
-    					  else{ //login es incorrecto
+    					  }else{ //login es incorrecto
     						//mostrar el mensaje de error
     						  modal("Error",res.message);  
     					  } 
-    					  	
+
     				  }
     				};
 

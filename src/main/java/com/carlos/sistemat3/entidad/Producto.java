@@ -39,6 +39,28 @@ public class Producto {
 	}
 	
 	
+	
+	/**
+	 * @param descripcion
+	 * @param precioCompra
+	 * @param precioVenta
+	 * @param precioPack7
+	 * @param precioPack15
+	 * @param stock
+	 */
+	public Producto(String descripcion, float precioCompra, float precioVenta, float precioPack7, float precioPack15,
+			float stock) {
+		super();
+		this.descripcion = descripcion;
+		this.precioCompra = precioCompra;
+		this.precioVenta = precioVenta;
+		this.precioPack7 = precioPack7;
+		this.precioPack15 = precioPack15;
+		this.stock = stock;
+	}
+
+
+
 	/**
 	 * @param id
 	 * @param descripcion

@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.carlos.sistemat3.modelo.Response;
 import com.carlos.sistemat3.entidad.User;
 import com.carlos.sistemat3.entidad.Producto;
+import com.carlos.sistemat3.entidad.Cliente;
 import com.carlos.sistemat3.servicio.UsuarioServicio;
+import com.carlos.sistemat3.servicio.ClienteServicio;
 import com.carlos.sistemat3.servicio.ProductoServicio;
 
 @RestController
@@ -31,6 +33,11 @@ public class WebServiceController {
 	@Autowired
 	@Qualifier("productoServicio")
 	private ProductoServicio productoServicio;
+	
+	
+	@Autowired
+	@Qualifier("clienteServicio")
+	private ClienteServicio clienteServicio;
 	
 	
 	/*Api Usuarios*/
@@ -96,7 +103,7 @@ public class WebServiceController {
 	}
 	
 	/**
-	 * autorizar login
+	 * login
 	 * @return token
 	 * */
 	@GetMapping("/auth")
@@ -111,15 +118,68 @@ public class WebServiceController {
 		return new Response<>(Response.STATUS_ERROR,"El usuario no existe");
 	}
 	
+	/*Clientes*/
+	
+	/*
+	 * Obtener todos los clientes
+	 * @return listado de clientes 
+	 * */
+	@GetMapping("/clientes")
+	public Response getClientes(@RequestParam(value="rucdni",defaultValue="-1")String rucdni){				
+		return new Response<Cliente>(Response.STATUS_OK,clienteServicio.findByRucODni(rucdni));
+	}
+	
+	/**
+	 * Ingresar un nuevo usuario
+	 * @return status si ha sido exitoso o no
+	 * */
+	@PostMapping("/clientes")
+	public Response addCliente(@RequestParam(value="rucdni",defaultValue="-1")String rucdni,
+							   @RequestParam(value="nombre",defaultValue="-1")String nombre,
+							   @RequestParam(value="direccionFiscal",defaultValue="-1")String direccionFiscal,
+							   @RequestParam(value="direccionEntrega",defaultValue="-1")String direccionEntrega,
+							   @RequestParam(value="telefono",defaultValue="-1")String telefono,
+							   @RequestParam(value="email",defaultValue="-1")String email) {
+		if(rucdni!="-1" && 
+		   nombre!="-1" &&
+		   direccionFiscal!="-1" &&
+		   direccionEntrega!="-1" &&
+		   telefono!="-1") {
+			
+			clienteServicio.add(new Cliente(rucdni, nombre, direccionFiscal, direccionEntrega, telefono, email));			
+			return new Response<>(Response.STATUS_OK,"El cliente ha sido registrado con éxito");
+		}
+		
+		return new Response<>(Response.STATUS_ERROR,"No se han ingresado los parámetros correctamente");
+	}
+	
+	
+	
 	/**
 	 * Obtener todos los productos
 	 * @return listado de productos
 	 * */
 	@GetMapping("/productos")
-	public List<Producto> getProductos() {		
-		return productoServicio.all();
+	public Response getProductos() {
+		return new Response<Producto>(Response.STATUS_OK,productoServicio.all());		
 	}
 	
+	
+	
+	/**
+	 * registrar producto
+	 * @return producto
+	 * */
+	@PostMapping("/productos")
+	public Response addProducto(@RequestParam(value="descripcion",defaultValue="")String descripcion,
+								@RequestParam(value="precioCompra",defaultValue="0.0")float precioCompra,
+								@RequestParam(value="precioVenta",defaultValue="0.0")float precioVenta,
+								@RequestParam(value="precioPack7",defaultValue="0.0")float precioPack7,
+								@RequestParam(value="precioPack15",defaultValue="0.0")float precioPack15,
+								@RequestParam(value="stock",defaultValue="0")float stock) {
+		productoServicio.add(new Producto(descripcion,precioCompra,precioVenta,precioPack7,precioPack15,stock));
+		return new Response<Producto>(Response.STATUS_OK,"El producto se ha agregado con éxito");
+	}
 
 	
 		

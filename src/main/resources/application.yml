@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/sysgc
+    url: jdbc:mysql://localhost:3306/cyg
     username: root           
-    
+    password: admin
   jpa:
     show-sql: true
     hibernate:          
