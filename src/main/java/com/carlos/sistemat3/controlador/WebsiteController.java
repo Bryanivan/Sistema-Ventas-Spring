@@ -13,15 +13,19 @@ public class WebsiteController {
 		return "dashboard";
 	}
 	
-
 	
 	@GetMapping("/login")
 	public String login() {
 		return "login";
 	}
 	
-	@GetMapping("/reporte")
-	public String table() {
-		return "table";
+	@GetMapping("/reporte_productos")
+	public String reporteProductos() {
+		return "reporte_productos";
+	}
+	
+	@GetMapping("/registro_clientes")
+	public String registroClientes() {
+		return "registro_clientes";
 	}
 }

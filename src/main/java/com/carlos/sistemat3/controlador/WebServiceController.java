@@ -119,15 +119,25 @@ public class WebServiceController {
 	}
 	
 	/*Clientes*/
-	
 	/*
 	 * Obtener todos los clientes
 	 * @return listado de clientes 
 	 * */
 	@GetMapping("/clientes")
-	public Response getClientes(@RequestParam(value="rucdni",defaultValue="-1")String rucdni){				
-		return new Response<Cliente>(Response.STATUS_OK,clienteServicio.findByRucODni(rucdni));
+	public Response getClientes(){				
+		return new Response<Cliente>(Response.STATUS_OK,clienteServicio.all());
 	}
+
+	
+	
+	/*
+	 * Obtener todos los clientes
+	 * @return listado de clientes 
+	 * 
+	@GetMapping("/clientes/{dni}")
+	public Response getClientesBy(@RequestParam(value="rucdni",defaultValue="-1")String rucdni){				
+		return new Response<Cliente>(Response.STATUS_OK,clienteServicio.findByRucODni(rucdni));
+	}*/
 	
 	/**
 	 * Ingresar un nuevo usuario

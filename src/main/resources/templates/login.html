@@ -14,7 +14,7 @@
                         <div class="card card-profile">
                             <div class="card-avatar">
                                 <a href="#pablo">
-                                    <img class="img" src="../static/img/faces/marc.jpg"  th:src="@{/img/faces/marc.jpg}"/>
+                                    <img class="img" src="../static/img/user.png"  th:src="@{/img/user.png}"/>
                                 </a>
                             </div>
                             <div class="content">                                
@@ -48,22 +48,14 @@
                 </div>
             </div>
         </div>
-        <footer class="footer">
-            <div class="container-fluid">               
-                <p class="copyright pull-right">
-                    &copy;
-                    <script>
-                        document.write(new Date().getFullYear())
-                    </script>
-                    By Los Mens Team, PRO-DEVS
-                </p>
-            </div>
-        </footer>
+        <!--footer-->
+        <footer class="footer" th:replace="fragments/footer :: footer"></footer> 
+        
     </div>  
     
 
     <!--dependencias JS-->
-    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
     
     <!--script para el login-->    
     <script>
