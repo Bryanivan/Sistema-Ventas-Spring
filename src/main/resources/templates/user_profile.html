@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<!--título de web, metas, dependencias CSS/JS-->
+<head th:include="fragments/header :: header (pageName='Perfíl de usuario')">
+</head>
+
+<body>
+    <div class="wrapper">
+        <!--sidenav-->
+        <div th:include="fragments/sidenav :: sidenav" class="sidebar" data-color="purple" data-image="../static/img/sidebar-1.jpg" th:data-image="@{/img/sidebar-1.png}"></div>
+
+        <!--menu-->
+        <div class="main-panel">
+            <!--menú de navegación-->
+            <nav th:include="fragments/navbar :: navbar" class="navbar navbar-transparent navbar-absolute"></nav>
+            <div class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header" data-background-color="purple">
+                                    <h4 class="title">Editar perfil de empleado</h4>
+                                    <p class="category">Completa el formulario</p>
+                                </div>
+                                <div class="card-content">
+                                    <form>
+                                        <div class="row">                                          
+                                            <div class="col-md-6">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Usuario</label>
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Correo</label>
+                                                    <input type="email" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Nombres</label>
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Apellido paterno</label>
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Apellido materno</label>
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Dni</label>
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Telefono</label>
+                                                    <input type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Sueldo</label>
+                                                    <input type="text" class="form-control" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" id="btn-actualizar" class="btn btn-primary pull-right">Actualizar perfil</button>
+                                        <div class="clearfix"></div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card card-profile">
+                                <div class="card-avatar">
+                                    <a href="#pablo">
+                                        <img class="img" src="../static/img/faces/marc.jpg" />
+                                    </a>
+                                </div>
+                                <div class="content">
+                                    <h6 class="category text-gray">CEO / Co-Founder</h6>
+                                    <h4 class="card-title">Chinchay gay</h4>
+                                    <p class="card-content">
+                                        Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
+                                    </p>
+                                    <a href="#pablo" class="btn btn-primary btn-round">Follow</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           <!--footer-->
+            <footer class="footer" th:replace="fragments/footer :: footer"></footer> 
+        </div>
+    </div>
+</body>
+<!--dependencias JS-->    
+    <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
+
+</html>

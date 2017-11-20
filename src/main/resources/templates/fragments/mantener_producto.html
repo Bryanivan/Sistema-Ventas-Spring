@@ -1,0 +1,177 @@
+<div th:fragment="mantener-producto">
+
+  <div id="mantener-producto" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">{{title}}</h4>
+        </div>
+        <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="form-group">
+                          <label class="control-label">Nombre</label>
+                          <input type="text" class="form-control" v-model="producto.descripcion"/>
+                      </div>                      
+                  </div>
+              </div>
+
+
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="form-group label-floating">
+                          <label class="control-label">Estado</label>
+                          <select id="cmb-estados" class="form-control">
+                              <option v-for="estadoTabla in estadosTabla" value="{{estadoTabla.id}}">{{estadoTabla.estado.descripcion}}</option>
+                          </select>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="form-group label-floating">
+                          <label class="control-label">Precio de compra (S/.)</label>
+                          <input type="number" class="form-control" v-model="producto.precioCompra"/>
+                      </div>
+                  </div>
+              </div>
+
+
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="form-group label-floating">
+                          <label class="control-label">Precio de venta (S/.)</label>
+                          <input type="number" class="form-control" v-model="producto.precioVenta"/>
+                      </div>                      
+                  </div>
+              </div>
+
+
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="form-group label-floating">
+                          <label class="control-label">Precio de pack por 7 unidades (S/.)</label>
+                          <input type="number" class="form-control" v-model="producto.precioPack7"/>
+                      </div>                      
+                  </div>
+              </div>
+
+
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="form-group label-floating">
+                          <label class="control-label">Precio de pack por 15 unidades (S/.)</label>
+                          <input type="number" class="form-control" v-model="producto.precioPack15"/>
+                      </div>
+                  </div>
+              </div>
+
+
+
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="form-group label-floating">
+                          <label class="control-label">Stock</label>
+                          <input type="number" class="form-control" v-model="producto.stock"/>
+                      </div>                      
+                  </div>
+              </div>
+
+        </div>
+        <div class="modal-footer">
+          <button @click="guardarProducto" type="button" class="btn btn-default" data-dismiss="modal">Guardar</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <script>
+    var isUpdating=false;
+    var onMantenimientoListener;
+    var mantenerProducto = new Vue({
+      el: '#mantener-producto',
+      data:{
+        title:'Mantener Producto',
+        producto:{
+          descripcion:'',
+          precioCompra:0.0,
+          precioVenta:0.0,
+          precioPack7:0.0,
+          precioPack15:0.0,
+          stock:0,
+          estado:'0',
+        },
+        productoAuxiliar:{},
+        estadosTabla:[]
+      },
+      beforeCreate:function(){
+        //obtener la lista de estados de producto
+        $.ajax({
+          url:'/estados/producto',
+          method:'get',
+          success:(resp)=>{
+            console.log(resp);
+            if(resp.error==0)
+              this.estadosTabla=resp.data;
+          }
+        });
+
+      },
+      methods:{
+        guardarProducto:function(){            
+            //guardar la data en el sistema (tanto actualizar como insertar)            
+            $.ajax({
+              url:'/productos',
+              method:(isUpdating?'put':'post'),
+              data:this.producto,
+              success:(resp)=>{
+                console.log(resp);
+
+                if(resp.error==0)
+                  //si se está actualizando
+                  if(isUpdating){
+                      for(var attr in this.productoAuxiliar)
+                        this.productoAuxiliar[attr]=this.producto[attr];
+                  }
+                  else{//si está insertando, obtener el nuevo id
+                        this.producto.id=resp.data[0].id;
+                  }
+                
+
+
+                //en cualquier caso, ejecutar un callback
+                onMantenimientoListener(resp,this.producto);
+              }
+            });
+            $('#mantener-producto').modal('hide');            
+        },
+        //único que debe ser llamado fuera del ámbito
+        show:function(title,producto,listener){
+          this.title=title;
+          isUpdating=(producto!=undefined); //si se pasó el producto como parámetro
+          if(isUpdating) {
+            //actualizar, clonando el producto que viene
+            this.producto=$.extend(true, {}, producto); 
+            this.productoAuxiliar=producto;
+          }
+          else this.producto={ //sino, crear un nuevo producto
+                descripcion:'',
+                precioCompra:0.0,
+                precioVenta:0.0,
+                precioPack7:0.0,
+                precioPack15:0.0,
+                stock:0,
+                estado:'0',
+              };
+
+          onMantenimientoListener=listener;
+          $('#mantener-producto .label-floating').removeClass('is-empty');
+          $('#mantener-producto').modal('show');
+        }        
+      }  
+    });
+  </script>
+
+</div>

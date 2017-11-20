@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en">
 <!--título de web, metas, dependencias CSS/JS-->
-<head th:include="fragments/header :: header (pageName='Clientes')">
+<head th:include="fragments/header :: header (pageName='Proveedores')">
 </head>
 
 <body>
     <div class="wrapper">
-        <div th:include="fragments/sidenav :: sidenav" class="sidebar" data-color="purple" data-image="../img/sidebar-1.jpg" ></div>
+        <div th:include="fragments/sidenav :: sidenav" class="sidebar" data-color="purple" data-image="../static/img/sidebar-1.jpg" th:data-image="@{/img/sidebar-1.png}"></div>
 
         <div class="main-panel">
             <nav th:include="fragments/navbar :: navbar" class="navbar navbar-transparent navbar-absolute"></nav>
@@ -14,15 +14,15 @@
                 <div class="container-fluid">
                     <div class="row">                        
                         <div class="col-md-12">
-                            <div class="card clientes">
+                            <div class="card proveedores">
                                 <div class="card-header" data-background-color="purple">
-                                    <h4 class="title">Clientes</h4>
-                                    <p class="category">Lista de clientes</p>
+                                    <h4 class="title">Proveedores</h4>
+                                    <p class="category">Lista de proveedores</p>
                                 </div>
                                 <div class="card-content table-responsive">
-                                	<form id="buscar-form" class="navbar-form navbar-right" role="search">
+                                	<form class="navbar-form navbar-right" role="search">
 			                            <div class="form-group  is-empty">
-			                                <input id="txt-buscar" type="text" class="form-control" placeholder="Buscar">
+			                                <input type="text" class="form-control" placeholder="Buscar">
 			                                <span class="material-input"></span>
 			                            </div>
 			                            <button type="submit" class="btn btn-white btn-round btn-just-icon">
@@ -32,12 +32,10 @@
 			                        </form>
                                     <table class="table lista">
                                         <thead class="text-primary">
-                                            <th>RUC o DNI</th>
-                                            <th>Nombre completo</th>
-                                            <th>Dirección fiscal </th>
-                                            <th>Dirección de entrega</th>
-                                            <th>Teléfono</th>
+                                            <th>Razón social</th>
+                                            <th>RUC</th>
                                             <th>Email</th>
+                                            <th>Teléfono</th>
                                             <th>Acciones</th>
                                         </thead>
                                         <tbody>                                            
@@ -60,50 +58,30 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            /*listener para cuando se obtenga los clientes éxitosamente*/
-            var onClientesGetSuccessListener=(resp)=>{
-                    console.log(resp);
+            $.ajax({
+                url:'/proveedores',
+                method:'get',
+                success:(resp)=>{
+                	console.log(resp);
                     if(resp.error==0){//respuesta sin errores
-                        clientes=resp.data;                        
-                        console.log(clientes);
-                        $('.clientes .lista tbody').empty();
-                        for(var i in clientes){
+                        proveedores=resp.data;                        
+                        console.log(proveedores);
+                        for(var i in proveedores){
 
-                            let {rucODni,nombreCompleto,direccionFiscal,direccionEntrega,telefono,email}=clientes[i];
-                            $('.clientes .lista tbody').append(`<tr>
-                                                                    <td>${rucODni}</td>
-                                                                    <td>${nombreCompleto}</td>
-                                                                    <td>${direccionFiscal}</td>
-                                                                    <td>${direccionEntrega}</td>
-                                                                    <td>${telefono}</td>
+                            let {razonSocial,ruc,email,telefono}=proveedores[i];
+                            $('.proveedores .lista tbody').append(`<tr>
+                                                                    <td>${razonSocial}</td>
+                                                                    <td>${ruc}</td>
                                                                     <td>${email}</td>
+                                                                    <td>${telefono}</td>
                                                                     <td><a href=""><i class="material-icons">border_color</i></a></td>
                                                                  </tr>`);
                             
                         }
 
                     }
-                };
-
-            /*obtener todos los clientes*/
-            $.ajax({
-                url:'/clientes',
-                method:'get',
-                success: onClientesGetSuccessListener
+                }
             });
-
-            /*buscar cliente por dni*/
-            $('#buscar-form').on('submit',(evt)=>{
-                evt.preventDefault();
-                let dni=$('#txt-buscar').val();
-                /*obtener todos los clientes*/                
-                $.ajax({
-                    url:`/clientes/${dni}`,
-                    method:'get',
-                    success: onClientesGetSuccessListener
-                });
-            });
-
         });
 
     </script>

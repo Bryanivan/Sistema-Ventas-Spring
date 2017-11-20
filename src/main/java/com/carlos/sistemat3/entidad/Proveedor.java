@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
+ * 
+ * Entidad Proveedor
  * @author Carlos Chavez Laguna
  *
  */
@@ -38,6 +40,24 @@ public class Proveedor {
 		
 	}
 	
+	
+	
+	/**
+	 * @param razonSocial
+	 * @param rUC
+	 * @param email
+	 * @param telefono
+	 */
+	public Proveedor(String razonSocial, String rUC, String email, String telefono) {
+		super();
+		this.razonSocial = razonSocial;
+		RUC = rUC;
+		this.email = email;
+		this.telefono = telefono;
+	}
+
+
+
 	/**
 	 * @param id
 	 * @param razonSocial

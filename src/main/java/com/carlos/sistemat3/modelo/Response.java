@@ -50,6 +50,20 @@ public class Response<T> {
 	
 	
 	
+	
+	/**
+	 * 
+	 * @param error
+	 * @param message
+	 * @param data
+	 */
+	public Response(int error, String message,List<T> data) {
+		super();
+		this.data = data;
+		this.error = error;
+		this.message = message;
+	}
+
 	/**
 	 * @return the error
 	 */

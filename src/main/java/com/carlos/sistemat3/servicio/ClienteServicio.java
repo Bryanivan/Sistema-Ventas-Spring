@@ -14,6 +14,8 @@ import com.carlos.sistemat3.repositorio.ClienteJpaRepository;
  */
 @Service("clienteServicio")
 public class ClienteServicio implements EntidadServicio<Cliente>{
+	
+	/*Injectando el repositorio de la entidad cliente*/
 	@Autowired
 	@Qualifier("clienteJpaRepository")
 	private ClienteJpaRepository clienteJpaRepository;
