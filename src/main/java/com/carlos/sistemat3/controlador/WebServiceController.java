@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.carlos.sistemat3.modelo.Response;
@@ -197,8 +198,23 @@ public class WebServiceController {
 	 * @return listado de productos
 	 * */
 	@GetMapping("/productos")
-	public Response getProductos() {
-		return new Response<Producto>(Response.STATUS_OK,productoServicio.all());		
+	public Response getProductos(@RequestParam(value="valorBusqueda",defaultValue="-1")String valorBusqueda,
+								 @RequestParam(value="filtro",defaultValue="-1")Integer filtro) {
+		
+		
+			//buscando filtrando
+			if(valorBusqueda!="-1" && filtro!=-1)
+				switch(filtro){
+					//buscar por nombre
+					case 2:
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findByNombre(valorBusqueda));					
+					default: //por id
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findById(Integer.parseInt(valorBusqueda)));
+
+				}
+			
+		//en otro caso, se obtiene la lists completa
+		return new Response<Producto>(Response.STATUS_OK,productoServicio.all());
 	}
 	
 	
@@ -214,13 +230,8 @@ public class WebServiceController {
 	 * @return producto
 	 * */
 	@PostMapping("/productos")
-	public Response addProducto(@RequestParam(value="descripcion",defaultValue="")String descripcion,
-								@RequestParam(value="precioCompra",defaultValue="0.0")float precioCompra,
-								@RequestParam(value="precioVenta",defaultValue="0.0")float precioVenta,
-								@RequestParam(value="precioPack7",defaultValue="0.0")float precioPack7,
-								@RequestParam(value="precioPack15",defaultValue="0.0")float precioPack15,
-								@RequestParam(value="stock",defaultValue="0")float stock) {
-		Producto productoResultante=productoServicio.add(new Producto(descripcion,precioCompra,precioVenta,precioPack7,precioPack15,stock));
+	public Response addProducto(@RequestBody Producto producto) {
+		Producto productoResultante=productoServicio.add(producto);
 		List<Identificador> identificadores=new ArrayList<>();
 		identificadores.add(new Identificador(productoResultante.getId()));
 		return new Response<Identificador>(Response.STATUS_OK,"El producto se ha agregado con éxito",identificadores);
@@ -238,15 +249,15 @@ public class WebServiceController {
 	 * @return producto
 	 * */
 	@PutMapping("/productos")
-	public Response updateProducto(@RequestParam(value="id",defaultValue="0")int id,
-								@RequestParam(value="descripcion",defaultValue="")String descripcion,
-								@RequestParam(value="precioCompra",defaultValue="0.0")float precioCompra,
-								@RequestParam(value="precioVenta",defaultValue="0.0")float precioVenta,
-								@RequestParam(value="precioPack7",defaultValue="0.0")float precioPack7,
-								@RequestParam(value="precioPack15",defaultValue="0.0")float precioPack15,
-								@RequestParam(value="stock",defaultValue="0")float stock) {
-		productoServicio.update(new Producto(id,descripcion,precioCompra,precioVenta,precioPack7,precioPack15,stock));
-		return new Response<Producto>(Response.STATUS_OK,"El producto se ha modificado con éxito");
+	public Response updateProducto(@RequestBody Producto producto) {
+		Integer productoId= producto.getId();
+		//si el usario a asignado el id
+		if(productoId!=null) {
+			productoServicio.update(producto);			
+			return new Response<Producto>(Response.STATUS_OK,"El producto se ha modificado con éxito");
+		}
+		
+		return new Response<>(Response.STATUS_ERROR,"El id es necesario para modificar el producto"); 
 	}
 
 

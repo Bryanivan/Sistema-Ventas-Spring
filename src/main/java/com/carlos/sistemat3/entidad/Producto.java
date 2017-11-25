@@ -34,6 +34,9 @@ public class Producto {
 	@Column(name="stockprod")	
 	private float stock;
 	
+	@Column(name="estadostablas_idestadostabla")
+	private int estadoId;
+	
 	/*@ManyToOne
 	@JoinColumn(name="estadostablas_idestadostabla")
 	private Estado estado;*/
@@ -88,6 +91,31 @@ public class Producto {
 		this.stock = stock;
 	}
 
+	
+
+
+	/**
+	 * @param id
+	 * @param descripcion
+	 * @param precioCompra
+	 * @param precioVenta
+	 * @param precioPack7
+	 * @param precioPack15
+	 * @param stock
+	 * @param estadoId
+	 */
+	public Producto(int id, String descripcion, float precioCompra, float precioVenta, float precioPack7,
+			float precioPack15, float stock, int estadoId) {
+		super();
+		this.id = id;
+		this.descripcion = descripcion;
+		this.precioCompra = precioCompra;
+		this.precioVenta = precioVenta;
+		this.precioPack7 = precioPack7;
+		this.precioPack15 = precioPack15;
+		this.stock = stock;
+		this.estadoId = estadoId;
+	}
 
 
 
@@ -228,6 +256,25 @@ public class Producto {
 		this.stock = stock;
 	}
 
+
+
+	/**
+	 * @return the estadoId
+	 */
+	public int getEstadoId() {
+		return estadoId;
+	}
+
+
+
+	/**
+	 * @param estadoId the estadoId to set
+	 */
+	public void setEstadoId(int estadoId) {
+		this.estadoId = estadoId;
+	}
+
+	
 	
 	
 }

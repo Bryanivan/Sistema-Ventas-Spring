@@ -30,16 +30,24 @@
                                               <i class="material-icons">note_add</i>
                                         </a>
                                         <!--búsqueda-->
-                                        <form class="navbar-form navbar-right" role="search">
-    			                            <div class="form-group  is-empty">
-    			                                <input type="text" class="form-control" placeholder="Buscar">
+                                        <div class="navbar-form navbar-right" role="search">
+    			                            <!--texto a buscar-->
+                                            <div class="form-group  is-empty">
+    			                                <input type="text" class="form-control" placeholder="Buscar" v-model="busqueda.valor">
     			                                <span class="material-input"></span>
     			                            </div>
-    			                            <button type="submit" class="btn btn-white btn-round btn-just-icon">
+                                            <!--filtro-->
+                                            <div class="form-group label-floating">       
+                                              <select id="cmb-filtros" class="form-control" v-model="busqueda.filtroSeleccionadoId">
+                                                  <option v-for="filtro in busqueda.filtros"  v-bind:value="filtro.id">{{filtro.nombre}}</option>
+                                              </select>
+                                            </div>
+                                            <!--botón-->
+    			                            <button @click="buscarProducto" class="btn btn-white btn-round btn-just-icon">
     			                                <i class="material-icons">search</i>
     			                                <div class="ripple-container"></div>
     			                            </button>
-    			                        </form>
+    			                        </div>
                                     </div>
                                     <!--lista de productos en tabla-->
                                     <table class="table lista">
@@ -50,6 +58,7 @@
                                             <th>Precio por 7 unid.</th>
                                             <th>Precio por 15 unid.</th>
                                             <th>Stock</th>
+                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </thead>
                                         <tbody>      
@@ -61,6 +70,7 @@
                                                 <td class="text-primary">S/. {{producto.precioPack7}}</td>
                                                 <td class="text-primary">S/. {{producto.precioPack15}}</td>
                                                 <td class="text-primary">{{producto.stock}}</td>
+                                                <td class="text-primary">{{producto.estado}}</td>
                                                 <td><a @click="editarProducto(producto)" href="#editar-producto"><i class="material-icons">border_color</i></a></td>
                                              </tr>
                                         </tbody>
@@ -81,31 +91,80 @@
     <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
     <div th:replace="fragments/mantener_producto :: mantener-producto"></div> 
 
+    <!--obtener servicio de producto-->
+    <script th:src="@{/app/productoService.js}"></script>
+
     <script type="text/javascript">        
         $(document).ready(function() {
                     //modelo
                     var data={
-                        productos:[]
+                        productos:[],
+                        busqueda:{
+                            valor:'',
+                            filtroSeleccionadoId:1,
+                            filtros:[
+                                {
+                                    id:1,
+                                    nombre:'código'
+                                },
+                                {
+                                    id:2,
+                                    nombre:'nombre'
+                                }
+                            ]
+                        }
+
                     };
+
 
                     //vista-modelo
                     var vm = new Vue({
                         el: "#lista-productos",
                         data,
                         beforeCreate: function(){
-                            $.ajax({
-                            url:'/productos',
-                            method:'get',
-                            success:(resp)=>{                                    
-                                    console.log(resp);
-                                    if(resp.error==0){//respuesta sin errores
-                                        this.productos=resp.data;
-                                    }
+                            ProductoService.get()
+                                           .then((productos)=>{
+                                                console.log(productos);
+                                                                                                                                                                                                                            
+                                                //obtener los estados de los productos
+                                                EstadoService.get()
+                                                             .then((estadosTabla)=>{
+                                                                    for(var i in productos){
+                                                                        for(var ii in estadosTabla){
+                                                                            if(estadosTabla[ii].id==productos[i].estadoId){              
+                                                                                productos[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
 
-                                }
-                            });
+                                                                    this.productos=productos;
+                                                });
+                                            
+                                                
+                                            });
+
                         }, //métodos
                         methods:{
+                            onProductosGetListener:function (productos){
+                                                console.log(productos);
+                                                                                                                                                                                                                            
+                                                //obtener los estados de los productos
+                                                EstadoService.get()
+                                                             .then((estadosTabla)=>{
+                                                                    for(var i in productos){
+                                                                        for(var ii in estadosTabla){
+                                                                            if(estadosTabla[ii].id==productos[i].estadoId){              
+                                                                                productos[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    this.productos=productos;
+                                                });
+                                                
+                            },
                             editarProducto: function(producto){
                                 mantenerProducto.show('Editar producto',producto,
                                     //cuando se modifique el producto en el sistema
@@ -122,6 +181,15 @@
                                             if(resp.error==0) this.productos.push(producto);
                                     }
                                 );
+                            },
+                            buscarProducto: function(){                                
+                                if(this.busqueda.valor.trim().length>0)
+                                    ProductoService.buscar(this.busqueda.valor,this.busqueda.filtroSeleccionadoId)
+                                                   .then(this.onProductosGetListener);
+                                else
+                                    ProductoService.buscar('','')
+                                                   .then(this.onProductosGetListener);
+
                             }
                         }
                     });

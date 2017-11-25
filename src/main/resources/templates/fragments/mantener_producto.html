@@ -22,8 +22,8 @@
                   <div class="col-md-12">
                       <div class="form-group label-floating">
                           <label class="control-label">Estado</label>
-                          <select id="cmb-estados" class="form-control">
-                              <option v-for="estadoTabla in estadosTabla" value="{{estadoTabla.id}}">{{estadoTabla.estado.descripcion}}</option>
+                          <select id="cmb-estados" class="form-control" v-model="producto.estadoId">
+                              <option v-for="(estadoTabla,index) in estadosTabla"  v-bind:value="estadoTabla.id">{{estadoTabla.estado.descripcion}}</option>
                           </select>
                       </div>
                   </div>
@@ -87,7 +87,11 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
+  
   <script>
+    //reemplaza la ruta de importación, porfa (ELIMINAR)-- import {EstadoService} from '../static/app/estadoService.js'
+    var currentOne;
+
     var isUpdating=false;
     var onMantenimientoListener;
     var mantenerProducto = new Vue({
@@ -101,6 +105,7 @@
           precioPack7:0.0,
           precioPack15:0.0,
           stock:0,
+          estadoId:0,
           estado:'0',
         },
         productoAuxiliar:{},
@@ -108,16 +113,10 @@
       },
       beforeCreate:function(){
         //obtener la lista de estados de producto
-        $.ajax({
-          url:'/estados/producto',
-          method:'get',
-          success:(resp)=>{
-            console.log(resp);
-            if(resp.error==0)
-              this.estadosTabla=resp.data;
-          }
-        });
-
+        EstadoService.get()
+                     .then((estados)=>{
+                            this.estadosTabla=estados;
+                     });
       },
       methods:{
         guardarProducto:function(){            
@@ -125,9 +124,16 @@
             $.ajax({
               url:'/productos',
               method:(isUpdating?'put':'post'),
-              data:this.producto,
+              data:JSON.stringify(this.producto),
+              headers: {
+                "content-type": "application/json"                
+              },
               success:(resp)=>{
                 console.log(resp);
+                
+                this.producto.estado=$('#cmb-estados').find(':selected').text();
+                
+                currentOne=this.productoAuxiliar;
 
                 if(resp.error==0)
                   //si se está actualizando
@@ -143,6 +149,13 @@
 
                 //en cualquier caso, ejecutar un callback
                 onMantenimientoListener(resp,this.producto);
+              },
+              error:()=>{
+                resp={
+                  error:1,
+                  message:'error del servidor'
+                };
+                onMantenimientoListener(resp);
               }
             });
             $('#mantener-producto').modal('hide');            
@@ -163,6 +176,7 @@
                 precioPack7:0.0,
                 precioPack15:0.0,
                 stock:0,
+                estadoId:3,
                 estado:'0',
               };
 

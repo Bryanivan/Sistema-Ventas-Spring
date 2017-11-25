@@ -56,5 +56,15 @@ public class ProductoServicio implements EntidadServicio<Producto>{
 	}
 
 	
+	
+	public List<Producto> findById(int id){
+		return productoJpaRepository.findById(id);
+	}
+	
+	public List<Producto> findByNombre(String nombre){
+		return productoJpaRepository.findByDescripcion(nombre);
+	}
+	
+	
 
 }
