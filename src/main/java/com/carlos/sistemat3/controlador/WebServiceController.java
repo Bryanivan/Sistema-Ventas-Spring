@@ -144,7 +144,21 @@ public class WebServiceController {
 	 * @return listado de clientes 
 	 * */
 	@GetMapping("/clientes")
-	public Response getClientes(){				
+	public Response getClientes(@RequestParam(value="valorBusqueda",defaultValue="-1")String valorBusqueda,
+			 					@RequestParam(value="filtro",defaultValue="-1")Integer filtro){
+		
+		//buscando filtrando
+		if(valorBusqueda!="-1" && filtro!=-1)
+			switch(filtro){
+				//buscar por nombres
+				case 2:
+					return new Response<Cliente>(Response.STATUS_OK,clienteServicio.findByNombreCompleto(valorBusqueda));					
+				default: //por dni o ruc
+					return new Response<Cliente>(Response.STATUS_OK,clienteServicio.findByRucODni(valorBusqueda));
+
+			}
+		
+		//en otro caso, se obtiene la lists completa
 		return new Response<Cliente>(Response.STATUS_OK,clienteServicio.all());
 	}
 
@@ -171,25 +185,36 @@ public class WebServiceController {
 	 * @return status si ha sido exitoso o no
 	 * */
 	@PostMapping("/clientes")
-	public Response addCliente(@RequestParam(value="rucdni",defaultValue="-1")String rucdni,
-							   @RequestParam(value="nombre",defaultValue="-1")String nombre,
-							   @RequestParam(value="direccionFiscal",defaultValue="-1")String direccionFiscal,
-							   @RequestParam(value="direccionEntrega",defaultValue="-1")String direccionEntrega,
-							   @RequestParam(value="telefono",defaultValue="-1")String telefono,
-							   @RequestParam(value="email",defaultValue="-1")String email) {
-		if(rucdni!="-1" && 
-		   nombre!="-1" &&
-		   direccionFiscal!="-1" &&
-		   direccionEntrega!="-1" &&
-		   telefono!="-1") {
-			
-			clienteServicio.add(new Cliente(rucdni, nombre, direccionFiscal, direccionEntrega, telefono, email));			
-			return new Response<>(Response.STATUS_OK,"El cliente ha sido registrado con éxito");
+	public Response addcliente(@RequestBody Cliente cliente) {
+		Cliente clienteResultante=clienteServicio.add(cliente);
+		List<Identificador> identificadores=new ArrayList<>();
+		identificadores.add(new Identificador(clienteResultante.getId()));
+		return new Response<Identificador>(Response.STATUS_OK,"El cliente se ha agregado con éxito",identificadores);
+	}
+
+	
+
+	/**
+	 * Actualizar cliente existente
+	 * @param rucdni Ruc o Dni del cliente
+	 * @param nombre nombre del cliente
+	 * @param direccionFiscal dirección fiscal del cliente
+	 * @param direccionEntrega dirección de entraga del cliente
+	 * @param telefono del cliente
+	 * @param email del lciente
+	 * @return status si ha sido exitoso o no
+	 * */
+	@PutMapping("/clientes")
+	public Response updateProducto(@RequestBody Cliente cliente) {
+		Integer clienteId= cliente.getId();
+		//si el usario a asignado el id
+		if(clienteId!=null) {
+			clienteServicio.update(cliente);			
+			return new Response<Cliente>(Response.STATUS_OK,"El cliente se ha modificado con éxito");
 		}
 		
-		return new Response<>(Response.STATUS_ERROR,"No se han ingresado los parámetros correctamente");
+		return new Response<>(Response.STATUS_ERROR,"El id es necesario para modificar el cliente"); 
 	}
-	
 	
 	/*Api de productos*/
 	
@@ -268,9 +293,23 @@ public class WebServiceController {
 	 * @return listado de clientes 
 	 * */
 	@GetMapping("/proveedores")
-	public Response getProveedores(){
+	public Response getProveedores(@RequestParam(value="valorBusqueda",defaultValue="-1")String valorBusqueda,
+								 @RequestParam(value="filtro",defaultValue="-1")Integer filtro) {			
+			//buscando filtrando
+			if(valorBusqueda!="-1" && filtro!=-1)
+				switch(filtro){
+					//buscar por nombre
+					case 2:
+						return new Response<Proveedor>(Response.STATUS_OK,proveedorServicio.findByRazonSocial(valorBusqueda));					
+					default: //por id
+						return new Response<Proveedor>(Response.STATUS_OK,proveedorServicio.findByRuc(valorBusqueda));
+
+				}
+			
+		//en otro caso, se obtiene la lists completa
 		return new Response<Proveedor>(Response.STATUS_OK,proveedorServicio.all());
 	}
+	
 	
 	
 	/**
@@ -282,17 +321,38 @@ public class WebServiceController {
 	 * @return status si el registro ha sido exitoso o no
 	 * */
 	@PostMapping("/proveedores")
-	public Response addProveedor(@RequestParam(value="razonsocial",defaultValue="")String razonsocial,
-								@RequestParam(value="ruc",defaultValue="")String ruc,
-								@RequestParam(value="email",defaultValue="")String email,
-								@RequestParam(value="telefono",defaultValue="")String telefono) {
-		if(ruc.length()==11 && !razonsocial.isEmpty()) {
-			proveedorServicio.add(new Proveedor(razonsocial,ruc,email,telefono));
-			return new Response<Producto>(Response.STATUS_OK,"El proveedor se ha agregado con éxito");		
+	public Response addProveedor(@RequestBody Proveedor proveedor) {
+		Proveedor proveedorResultante=proveedorServicio.add(proveedor);
+		List<Identificador> identificadores=new ArrayList<>();
+		identificadores.add(new Identificador(proveedorResultante.getId()));
+		return new Response<Identificador>(Response.STATUS_OK,"El proveedor se ha agregado con éxito",identificadores);
+	}
+
+	
+
+	/**
+	 * actualizar proveedor
+	 * @param razonsocial del proveedor
+	 * @param ruc del proveedor
+	 * @param email del proveedor 
+	 * @param telefono del proveedor	 
+	 * @return status si el registro ha sido exitoso o no
+	 * */
+	@PutMapping("/proveedores")
+	public Response updateProveedor(@RequestBody Proveedor proveedor) {
+		Integer proveedorId= proveedor.getId();
+		//si el usario a asignado el id
+		if(proveedorId!=null) {
+			proveedorServicio.update(proveedor);			
+			return new Response<Proveedor>(Response.STATUS_OK,"El proveedor se ha modificado con éxito");
 		}
 		
-		return new Response<>(Response.STATUS_ERROR,"No se han ingresado los parámetros correctamente");
+		return new Response<>(Response.STATUS_ERROR,"El id es necesario para modificar el proveedor"); 
 	}
+
+
+
+
 	
 	/*Api Estados tablas*/
 	

@@ -1,6 +1,6 @@
-<div th:fragment="mantener-producto">
+<div th:fragment="mantener-cliente">
 
-  <div id="mantener-producto" class="modal fade" tabindex="-1" role="dialog">
+  <div id="mantener-cliente" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -8,12 +8,12 @@
           <h4 class="modal-title">{{title}}</h4>
         </div>
         <div class="modal-body">
-          <form class="row" v-on:submit.prevent="guardarProducto()">
+          <form class="row" v-on:submit.prevent="guardarCliente()">
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group">
-                          <label class="control-label">Nombre</label>
-                          <input type="text" class="form-control" v-model="producto.descripcion"  required />
+                          <label class="control-label">Ruc o DNI</label>
+                          <input type="text" class="form-control" v-model="cliente.rucODni"  required />
                       </div>                      
                   </div>
               </div>
@@ -23,7 +23,7 @@
                   <div class="col-md-12">
                       <div class="form-group label-floating">
                           <label class="control-label">Estado</label>
-                          <select id="cmb-estados" class="form-control" v-model="producto.estadoId">
+                          <select id="cmb-estados" class="form-control" v-model="cliente.estadoId">
                               <option v-for="(estadoTabla,index) in estadosTabla"  v-bind:value="estadoTabla.id">{{estadoTabla.estado.descripcion}}</option>
                           </select>
                       </div>
@@ -33,8 +33,8 @@
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group label-floating">
-                          <label class="control-label">Precio de compra (S/.)</label>
-                          <input type="number" step="0.01" class="form-control" v-model="producto.precioCompra" required />
+                          <label class="control-label">Nombre completo</label>
+                          <input type="text" class="form-control" v-model="cliente.nombreCompleto" required />
                       </div>
                   </div>
               </div>
@@ -43,8 +43,9 @@
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group label-floating">
-                          <label class="control-label">Precio de venta (S/.)</label>
-                          <input type="number" step="0.01" class="form-control" v-model="producto.precioVenta" required />
+                          <label class="control-label">Dirección fiscal</label>
+                          <textarea class="form-control" v-model="cliente.direccionFiscal" required>                            
+                          </textarea>
                       </div>                      
                   </div>
               </div>
@@ -53,8 +54,8 @@
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group label-floating">
-                          <label class="control-label">Precio de pack por 7 unidades (S/.)</label>
-                          <input type="number" step="0.01" class="form-control" v-model="producto.precioPack7" required />
+                          <label class="control-label">Dirección de entrega</label>
+                          <input type="text" class="form-control" v-model="cliente.direccionEntrega" required />
                       </div>                      
                   </div>
               </div>
@@ -63,8 +64,8 @@
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group label-floating">
-                          <label class="control-label">Precio de pack por 15 unidades (S/.)</label>
-                          <input type="number" step="0.01" class="form-control" v-model="producto.precioPack15" required />
+                          <label class="control-label">Telefono</label>
+                          <input type="text" class="form-control" v-model="cliente.telefono" required />
                       </div>
                   </div>
               </div>
@@ -74,8 +75,8 @@
               <div class="row">
                   <div class="col-md-12">
                       <div class="form-group label-floating">
-                          <label class="control-label">Stock</label>
-                          <input type="number" class="form-control" v-model="producto.stock" required />
+                          <label class="control-label">Email</label>
+                          <input type="email" class="form-control" v-model="cliente.email" required />
                       </div>                      
                   </div>
               </div>
@@ -96,40 +97,40 @@
       
     var isUpdating=false;
     var onMantenimientoListener;
-    var mantenerProducto = new Vue({
-      el: '#mantener-producto',
+    var mantenerCliente = new Vue({
+      el: '#mantener-cliente',
       data:{
-        title:'Mantener Producto',
-        producto:{
-          descripcion:'',
-          precioCompra:0.0,
-          precioVenta:0.0,
-          precioPack7:0.0,
-          precioPack15:0.0,
-          stock:0,
+        title:'Mantener Cliente',
+        cliente:{
+          rucODni:'',
+          nombreCompleto:'',
+          direccionFiscal:'',
+          direccionEntrega:'',
+          telefono:'',
+          email:'',
           estadoId:0,
           estado:'0',
         },
-        productoAuxiliar:{},
+        clienteAuxiliar:{},
         estadosTabla:[]
       },
       beforeCreate:function(){
-        //obtener la lista de estados de producto
-        EstadoService.get('producto')
+        //obtener la lista de estados de cliente
+        EstadoService.get('cliente')
                      .then((estados)=>{
                             this.estadosTabla=estados;
                      });
 
       },
       methods:{
-        guardarProducto:function(){
+        guardarCliente:function(){
             this.close();            
             //ANTES DE ACTUALIZAR
             //evitar actualizar, si la data es la misma
             if(isUpdating){
                 let shouldUpdate=false; //debería actualizar
-                for(var attr in this.productoAuxiliar)
-                  if(this.productoAuxiliar[attr]!=this.producto[attr]){
+                for(var attr in this.clienteAuxiliar)
+                  if(this.clienteAuxiliar[attr]!=this.cliente[attr]){
                     shouldUpdate=true;
                     break;
                   }
@@ -147,31 +148,31 @@
             //AHORA ASÍ GUARDAR O ACTUALIZAR
             //guardar la data en el sistema (tanto actualizar como insertar)            
             $.ajax({
-              url:'/productos',
+              url:'/clientes',
               method:(isUpdating?'put':'post'),
-              data:JSON.stringify(this.producto),
+              data:JSON.stringify(this.cliente),
               headers: {
                 "content-type": "application/json"                
               },
               success:(resp)=>{
                 console.log(resp);
                 
-                this.producto.estado=$('#cmb-estados').find(':selected').text();                              
+                this.cliente.estado=$('#cmb-estados').find(':selected').text();                              
 
                 if(resp.error==0)
                   //si se está actualizando
                   if(isUpdating){
-                      for(var attr in this.productoAuxiliar)
-                        this.productoAuxiliar[attr]=this.producto[attr];
+                      for(var attr in this.clienteAuxiliar)
+                        this.clienteAuxiliar[attr]=this.cliente[attr];
                   }
                   else{//si está insertando, obtener el nuevo id
-                        this.producto.id=resp.data[0].id;
+                        this.cliente.id=resp.data[0].id;
                   }
                 
 
 
                 //en cualquier caso, ejecutar un callback
-                onMantenimientoListener(resp,this.producto);
+                onMantenimientoListener(resp,this.cliente);
               },
               error:()=>{
                 resp={
@@ -185,32 +186,32 @@
 
         },
         //único que debe ser llamado fuera del ámbito
-        show:function(title,producto,listener){
+        show:function(title,cliente,listener){
           this.title=title;
-          isUpdating=(producto!=undefined); //si se pasó el producto como parámetro
+          isUpdating=(cliente!=undefined); //si se pasó el cliente como parámetro
           if(isUpdating) {
-            //actualizar, clonando el producto que viene
-            this.producto=$.extend(true, {}, producto); 
-            this.productoAuxiliar=producto;
+            //actualizar, clonando el cliente que viene
+            this.cliente=$.extend(true, {}, cliente); 
+            this.clienteAuxiliar=cliente;
           }
-          else this.producto={ //sino, crear un nuevo producto
-                descripcion:'',
-                precioCompra:0.0,
-                precioVenta:0.0,
-                precioPack7:0.0,
-                precioPack15:0.0,
-                stock:0,
-                estadoId:3,
+          else this.cliente={ //sino, crear un nuevo cliente
+                rucODni:'',
+                nombreCompleto:'',
+                direccionFiscal:'',
+                direccionEntrega:'',
+                telefono:'',
+                email:'',
+                estadoId:6,
                 estado:'0',
               };
 
           onMantenimientoListener=listener;
-          $('#mantener-producto .label-floating').removeClass('is-empty');
-          $('#mantener-producto').modal('show');
+          $('#mantener-cliente .label-floating').removeClass('is-empty');
+          $('#mantener-cliente').modal('show');
         },
         //ocultar
         close:function(){
-          $('#mantener-producto').modal('hide');
+          $('#mantener-cliente').modal('hide');
         }
 
 

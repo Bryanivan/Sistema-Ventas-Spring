@@ -127,7 +127,7 @@
                                                 console.log(productos);
                                                                                                                                                                                                                             
                                                 //obtener los estados de los productos
-                                                EstadoService.get()
+                                                EstadoService.get('producto')
                                                              .then((estadosTabla)=>{
                                                                     for(var i in productos){
                                                                         for(var ii in estadosTabla){
@@ -150,7 +150,7 @@
                                                 console.log(productos);
                                                                                                                                                                                                                             
                                                 //obtener los estados de los productos
-                                                EstadoService.get()
+                                                EstadoService.get('producto')
                                                              .then((estadosTabla)=>{
                                                                     for(var i in productos){
                                                                         for(var ii in estadosTabla){

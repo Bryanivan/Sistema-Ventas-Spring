@@ -31,7 +31,11 @@ public class Cliente {
 	
 	@Column(name="emailclie")	
 	private String email;
-
+	
+	@Column(name="estadostablas_idestadostabla")
+	private int estadoId;
+	
+	
 	/*Constructors*/	
 	public Cliente() {
 		
@@ -80,6 +84,32 @@ public class Cliente {
 		this.telefono = telefono;
 		this.email = email;
 	}
+
+	
+	/**
+	 * @param id
+	 * @param rucODni
+	 * @param nombreCompleto
+	 * @param direccionFiscal
+	 * @param direccionEntrega
+	 * @param telefono
+	 * @param email
+	 * @param estadoId
+	 */
+	public Cliente(int id, String rucODni, String nombreCompleto, String direccionFiscal, String direccionEntrega,
+			String telefono, String email, int estadoId) {
+		super();
+		this.id = id;
+		this.rucODni = rucODni;
+		this.nombreCompleto = nombreCompleto;
+		this.direccionFiscal = direccionFiscal;
+		this.direccionEntrega = direccionEntrega;
+		this.telefono = telefono;
+		this.email = email;
+		this.estadoId = estadoId;
+	}
+
+
 
 	/**
 	 * @return the id
@@ -177,6 +207,24 @@ public class Cliente {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+
+
+	/**
+	 * @return the estadoId
+	 */
+	public int getEstadoId() {
+		return estadoId;
+	}
+
+
+
+	/**
+	 * @param estadoId the estadoId to set
+	 */
+	public void setEstadoId(int estadoId) {
+		this.estadoId = estadoId;
 	}
 	
 	

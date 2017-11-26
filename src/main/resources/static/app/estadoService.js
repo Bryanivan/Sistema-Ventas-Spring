@@ -6,12 +6,12 @@ var estados=[];
 class EstadoService{
 	
 	//obtener la lista de estados de producto
-	static get(){
+	static get(entidad){
 		return new Promise((resolve)=>{
 			 
 	        if(estados.length==0)
 		        $.ajax({
-		          url:'/estados/producto',
+		          url:'/estados/'+entidad,
 		          method:'get',
 		          success:(resp)=>{
 		            console.log(resp);

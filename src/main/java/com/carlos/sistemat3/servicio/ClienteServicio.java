@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import com.carlos.sistemat3.entidad.Cliente;
+import com.carlos.sistemat3.entidad.Producto;
 import com.carlos.sistemat3.repositorio.ClienteJpaRepository;
 
 /**
@@ -52,4 +53,11 @@ public class ClienteServicio implements EntidadServicio<Cliente>{
 	public List<Cliente> findByRucODni(String rucODni) {
 		return clienteJpaRepository.findByRucODni(rucODni);
 	}
+
+	
+	public List<Cliente> findByNombreCompleto(String nombre){
+		return clienteJpaRepository.findByNombreCompletoContaining(nombre);
+	}
+	
+	
 }

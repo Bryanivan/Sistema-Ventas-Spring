@@ -6,7 +6,7 @@
 
 <body>
     <div class="wrapper">
-        <div th:include="fragments/sidenav :: sidenav" class="sidebar" data-color="purple" data-image="../static/img/sidebar-1.jpg" th:data-image="@{/img/sidebar-1.png}"></div>
+        <div th:include="fragments/sidenav :: sidenav" class="sidebar" data-color="purple" data-image="../img/sidebar-1.jpg"></div>
 
         <div class="main-panel">
             <nav th:include="fragments/navbar :: navbar" class="navbar navbar-transparent navbar-absolute"></nav>
@@ -16,29 +16,60 @@
                         <div class="col-md-12">
                             <div class="card proveedores">
                                 <div class="card-header" data-background-color="purple">
-                                    <h4 class="title">Proveedores</h4>
-                                    <p class="category">Lista de proveedores</p>
+                                    <h4 class="title">proveedores</h4>
+                                    <p class="category">Listado de proveedores</p>
                                 </div>
-                                <div class="card-content table-responsive">
-                                	<form class="navbar-form navbar-right" role="search">
-			                            <div class="form-group  is-empty">
-			                                <input type="text" class="form-control" placeholder="Buscar">
-			                                <span class="material-input"></span>
-			                            </div>
-			                            <button type="submit" class="btn btn-white btn-round btn-just-icon">
-			                                <i class="material-icons">search</i>
-			                                <div class="ripple-container"></div>
-			                            </button>
-			                        </form>
+                                <div  id="lista-proveedores" class="card-content table-responsive">
+                                    <!--botón agregar nuevo-->
+                                    <div class="row col-md-12">             
+                                        <a id="btn-agregar-proveedor" 
+                                           class="btn btn-white btn-just-icon btn-round" @click="agregarProveedor" 
+                                           href="#agregar-proveedor"
+                                           data-toggle="tooltip" 
+                                           title="Agregar proveedor">
+                                              <i class="material-icons">note_add</i>
+                                        </a>
+                                        <!--búsqueda-->
+                                        <div class="navbar-form navbar-right" role="search">
+                                            <!--texto a buscar-->
+                                            <div class="form-group  is-empty">
+                                                <input type="text" class="form-control" placeholder="Buscar" v-model="busqueda.valor">
+                                                <span class="material-input"></span>
+                                            </div>
+                                            <!--filtro-->
+                                            <div class="form-group label-floating">       
+                                              <select id="cmb-filtros" class="form-control" v-model="busqueda.filtroSeleccionadoId">
+                                                  <option v-for="filtro in busqueda.filtros"  v-bind:value="filtro.id">{{filtro.nombre}}</option>
+                                              </select>
+                                            </div>
+                                            <!--botón-->
+                                            <button @click="buscarProveedor" class="btn btn-white btn-round btn-just-icon">
+                                                <i class="material-icons">search</i>
+                                                <div class="ripple-container"></div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!--lista de proveedores en tabla-->
                                     <table class="table lista">
                                         <thead class="text-primary">
                                             <th>Razón social</th>
                                             <th>RUC</th>
                                             <th>Email</th>
                                             <th>Teléfono</th>
-                                            <th>Acciones</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th     
                                         </thead>
-                                        <tbody>                                            
+                                        <tbody>      
+                                            <!--vista-->
+                                            <tr v-for="proveedor in proveedores">
+                                                <td>{{proveedor.razonSocial}}</td>
+                                                <td>{{proveedor.ruc}}</td>
+                                                <td>{{proveedor.email}}</td>
+                                                <td>{{proveedor.telefono}}</td>
+                                                <td>{{proveedor.email}}</td>
+                                                <td>{{proveedor.estado}}</td>
+                                                <td><a @click="editarProveedor(proveedor)" href="#editar-proveedor"><i class="material-icons">border_color</i></a></td>
+                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -55,38 +86,113 @@
 
     <!--dependencias JS-->
     <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
+    <div th:replace="fragments/mantener_proveedor :: mantener-proveedor"></div>
 
-    <script type="text/javascript">
+    <!--obtener servicio de proveedor-->
+    <script th:src="@{/app/ProveedorService.js}"></script>
+
+    <script type="text/javascript">        
         $(document).ready(function() {
-            $.ajax({
-                url:'/proveedores',
-                method:'get',
-                success:(resp)=>{
-                	console.log(resp);
-                    if(resp.error==0){//respuesta sin errores
-                        proveedores=resp.data;                        
-                        console.log(proveedores);
-                        for(var i in proveedores){
-
-                            let {razonSocial,ruc,email,telefono}=proveedores[i];
-                            $('.proveedores .lista tbody').append(`<tr>
-                                                                    <td>${razonSocial}</td>
-                                                                    <td>${ruc}</td>
-                                                                    <td>${email}</td>
-                                                                    <td>${telefono}</td>
-                                                                    <td><a href=""><i class="material-icons">border_color</i></a></td>
-                                                                 </tr>`);
-                            
+                    //modelo
+                    var data={
+                        proveedores:[],
+                        busqueda:{
+                            valor:'',
+                            filtroSeleccionadoId:1,
+                            filtros:[
+                                {
+                                    id:1,
+                                    nombre:'Ruc'
+                                },
+                                {
+                                    id:2,
+                                    nombre:'Razón social'
+                                }
+                            ]
                         }
 
-                    }
-                }
-            });
-        });
+                    };
 
+
+                    //vista-modelo
+                    var vm = new Vue({
+                        el: "#lista-proveedores",
+                        data,
+                        beforeCreate: function(){
+                            ProveedorService.get()
+                                           .then((proveedores)=>{
+                                                console.log(proveedores);
+                                                                                                                                                                                                                            
+                                                //obtener los estados de los proveedores
+                                                EstadoService.get('proveedor')
+                                                             .then((estadosTabla)=>{
+                                                                    for(var i in proveedores){
+                                                                        for(var ii in estadosTabla){
+                                                                            if(estadosTabla[ii].id==proveedores[i].estadoId){              
+                                                                                proveedores[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    this.proveedores=proveedores;
+                                                });
+                                            
+                                                
+                                            });
+
+                        }, //métodos
+                        methods:{
+                            onProveedoresGetListener:function (proveedores){
+                                                console.log(proveedores);
+                                                                                                                                                                                                                            
+                                                //obtener los estados de los proveedores
+                                                EstadoService.get('proveedor')
+                                                             .then((estadosTabla)=>{
+                                                                    for(var i in proveedores){
+                                                                        for(var ii in estadosTabla){
+                                                                            if(estadosTabla[ii].id==proveedores[i].estadoId){              
+                                                                                proveedores[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    this.proveedores=proveedores;
+                                                });
+                                                
+                            },
+                            editarProveedor: function(proveedor){
+                                mantenerProveedor.show('Editar proveedor',proveedor,
+                                    //cuando se modifique el proveedor en el sistema
+                                    (resp)=>{
+                                            modal('Mantenimiento de proveedores',resp.message);
+
+                                    });
+                            },
+                            agregarProveedor: function(){
+                                mantenerProveedor.show('Agregar proveedor',undefined,
+                                    //cuando se agregue el proveedor en el sistema
+                                    (resp,proveedor)=>{
+                                            modal('Mantenimiento de proveedores',resp.message);
+                                            if(resp.error==0) this.proveedores.push(proveedor);
+                                    }
+                                );
+                            },
+                            buscarProveedor: function(){                                
+                                if(this.busqueda.valor.trim().length>0)
+                                    ProveedorService.buscar(this.busqueda.valor,this.busqueda.filtroSeleccionadoId)
+                                                   .then(this.onProveedoresGetListener);
+                                else
+                                    ProveedorService.buscar('','')
+                                                   .then(this.onProveedoresGetListener);
+
+                            }
+                        }
+                    });
+        });
     </script>
 
 </body>
-
 
 </html>

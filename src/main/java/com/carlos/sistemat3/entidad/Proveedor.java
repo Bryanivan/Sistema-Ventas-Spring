@@ -27,7 +27,7 @@ public class Proveedor {
 	private String razonSocial;
 	
 	@Column(name="rucprov")	
-	private String RUC;
+	private String ruc;
 	
 	@Column(name="emailprov")
 	private String email;
@@ -35,6 +35,8 @@ public class Proveedor {
 	@Column(name="telefonoprov")	
 	private String telefono;
 	
+	@Column(name="estadostablas_idestadostabla")
+	private int estadoId;
 	
 	public Proveedor() {
 		
@@ -48,10 +50,10 @@ public class Proveedor {
 	 * @param email
 	 * @param telefono
 	 */
-	public Proveedor(String razonSocial, String rUC, String email, String telefono) {
+	public Proveedor(String razonSocial, String ruc, String email, String telefono) {
 		super();
 		this.razonSocial = razonSocial;
-		RUC = rUC;
+		this.ruc = ruc;
 		this.email = email;
 		this.telefono = telefono;
 	}
@@ -65,14 +67,37 @@ public class Proveedor {
 	 * @param email
 	 * @param telefono
 	 */
-	public Proveedor(int id, String razonSocial, String rUC, String email, String telefono) {
+	public Proveedor(int id, String razonSocial, String ruc, String email, String telefono) {
 		super();
 		this.id = id;
 		this.razonSocial = razonSocial;
-		RUC = rUC;
+		this.ruc = ruc;
 		this.email = email;
 		this.telefono = telefono;
 	}
+
+	
+	
+	
+	/**
+	 * @param id
+	 * @param razonSocial
+	 * @param rUC
+	 * @param email
+	 * @param telefono
+	 * @param estadoId
+	 */
+	public Proveedor(int id, String razonSocial, String ruc, String email, String telefono, int estadoId) {
+		super();
+		this.id = id;
+		this.razonSocial = razonSocial;
+		this.ruc = ruc;
+		this.email = email;
+		this.telefono = telefono;
+		this.estadoId = estadoId;
+	}
+
+
 
 	/**
 	 * @return the id
@@ -102,19 +127,25 @@ public class Proveedor {
 		this.razonSocial = razonSocial;
 	}
 
-	/**
-	 * @return the rUC
-	 */
-	public String getRUC() {
-		return RUC;
-	}
+	
 
 	/**
-	 * @param rUC the rUC to set
+	 * @return the ruc
 	 */
-	public void setRUC(String rUC) {
-		RUC = rUC;
+	public String getRuc() {
+		return ruc;
 	}
+
+
+
+	/**
+	 * @param ruc the ruc to set
+	 */
+	public void setRuc(String ruc) {
+		this.ruc = ruc;
+	}
+
+
 
 	/**
 	 * @return the email
@@ -142,6 +173,24 @@ public class Proveedor {
 	 */
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
+	}
+
+
+
+	/**
+	 * @return the estadoId
+	 */
+	public int getEstadoId() {
+		return estadoId;
+	}
+
+
+
+	/**
+	 * @param estadoId the estadoId to set
+	 */
+	public void setEstadoId(int estadoId) {
+		this.estadoId = estadoId;
 	}
 	
 	

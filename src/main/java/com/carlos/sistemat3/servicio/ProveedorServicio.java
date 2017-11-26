@@ -48,6 +48,14 @@ public class ProveedorServicio implements EntidadServicio<Proveedor>{
 	public Proveedor update(Proveedor entidad) {
 		return proveedorJpaRepository.save(entidad);
 	}
+	
 
+	public List<Proveedor> findByRuc(String ruc){
+		return proveedorJpaRepository.findByRuc(ruc);
+	}
+
+	public List<Proveedor> findByRazonSocial(String razonSocial){
+		return proveedorJpaRepository.findByRazonSocialContaining(razonSocial);
+	}
 
 }

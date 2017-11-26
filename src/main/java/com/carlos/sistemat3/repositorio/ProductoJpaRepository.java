@@ -16,6 +16,6 @@ import java.util.List;
 @Repository("productoJpaRepository")
 public interface ProductoJpaRepository extends JpaRepository<Producto,Serializable>{
 	List<Producto> findById(int id);
-	List<Producto> findByDescripcion(String descripcion);
+	List<Producto> findByDescripcionContaining(String descripcion);
 	List<Producto> findByEstadoId(String estadoId);
 }

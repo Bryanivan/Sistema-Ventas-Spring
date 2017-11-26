@@ -15,5 +15,6 @@ import com.carlos.sistemat3.entidad.Cliente;
  */
 @Repository("clienteJpaRepository")
 public interface ClienteJpaRepository extends JpaRepository<Cliente,Serializable>{
-	List<Cliente> findByRucODni(String RucODni); 
+	List<Cliente> findByRucODni(String RucODni);
+	List<Cliente> findByNombreCompletoContaining(String nombreCompleto);
 }

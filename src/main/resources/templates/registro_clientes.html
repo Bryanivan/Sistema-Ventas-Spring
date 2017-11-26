@@ -6,7 +6,7 @@
 
 <body>
     <div class="wrapper">
-        <div th:include="fragments/sidenav :: sidenav" class="sidebar" data-color="purple" data-image="../img/sidebar-1.jpg" ></div>
+        <div th:include="fragments/sidenav :: sidenav" class="sidebar" data-color="purple" data-image="../img/sidebar-1.jpg"></div>
 
         <div class="main-panel">
             <nav th:include="fragments/navbar :: navbar" class="navbar navbar-transparent navbar-absolute"></nav>
@@ -16,20 +16,40 @@
                         <div class="col-md-12">
                             <div class="card clientes">
                                 <div class="card-header" data-background-color="purple">
-                                    <h4 class="title">Clientes</h4>
-                                    <p class="category">Lista de clientes</p>
+                                    <h4 class="title">clientes</h4>
+                                    <p class="category">Listado de clientes</p>
                                 </div>
-                                <div class="card-content table-responsive">
-                                	<form id="buscar-form" class="navbar-form navbar-right" role="search">
-			                            <div class="form-group  is-empty">
-			                                <input id="txt-buscar" type="text" class="form-control" placeholder="Buscar">
-			                                <span class="material-input"></span>
-			                            </div>
-			                            <button type="submit" class="btn btn-white btn-round btn-just-icon">
-			                                <i class="material-icons">search</i>
-			                                <div class="ripple-container"></div>
-			                            </button>
-			                        </form>
+                                <div  id="lista-clientes" class="card-content table-responsive">
+                                    <!--botón agregar nuevo-->
+                                    <div class="row col-md-12">             
+                                        <a id="btn-agregar-cliente" 
+                                           class="btn btn-white btn-just-icon btn-round" @click="agregarCliente" 
+                                           href="#agregar-cliente"
+                                           data-toggle="tooltip" 
+                                           title="Agregar cliente">
+                                              <i class="material-icons">note_add</i>
+                                        </a>
+                                        <!--búsqueda-->
+                                        <div class="navbar-form navbar-right" role="search">
+                                            <!--texto a buscar-->
+                                            <div class="form-group  is-empty">
+                                                <input type="text" class="form-control" placeholder="Buscar" v-model="busqueda.valor">
+                                                <span class="material-input"></span>
+                                            </div>
+                                            <!--filtro-->
+                                            <div class="form-group label-floating">       
+                                              <select id="cmb-filtros" class="form-control" v-model="busqueda.filtroSeleccionadoId">
+                                                  <option v-for="filtro in busqueda.filtros"  v-bind:value="filtro.id">{{filtro.nombre}}</option>
+                                              </select>
+                                            </div>
+                                            <!--botón-->
+                                            <button @click="buscarCliente" class="btn btn-white btn-round btn-just-icon">
+                                                <i class="material-icons">search</i>
+                                                <div class="ripple-container"></div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!--lista de clientes en tabla-->
                                     <table class="table lista">
                                         <thead class="text-primary">
                                             <th>RUC o DNI</th>
@@ -38,9 +58,21 @@
                                             <th>Dirección de entrega</th>
                                             <th>Teléfono</th>
                                             <th>Email</th>
+                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </thead>
-                                        <tbody>                                            
+                                        <tbody>      
+                                            <!--vista-->
+                                            <tr v-for="cliente in clientes">
+                                                <td>{{cliente.rucODni}}</td>
+                                                <td>{{cliente.nombreCompleto}}</td>
+                                                <td>{{cliente.direccionFiscal}}</td>
+                                                <td>{{cliente.direccionEntrega}}</td>
+                                                <td>{{cliente.telefono}}</td>
+                                                <td>{{cliente.email}}</td>
+                                                <td>{{cliente.estado}}</td>
+                                                <td><a @click="editarCliente(cliente)" href="#editar-cliente"><i class="material-icons">border_color</i></a></td>
+                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -57,58 +89,115 @@
 
     <!--dependencias JS-->
     <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
+    <div th:replace="fragments/mantener_cliente :: mantener-cliente"></div>
 
-    <script type="text/javascript">
+    <!--obtener servicio de cliente-->
+    <script th:src="@{/app/ClienteService.js}"></script>
+
+    <script type="text/javascript">        
         $(document).ready(function() {
-            /*listener para cuando se obtenga los clientes éxitosamente*/
-            var onClientesGetSuccessListener=(resp)=>{
-                    console.log(resp);
-                    if(resp.error==0){//respuesta sin errores
-                        clientes=resp.data;                        
-                        console.log(clientes);
-                        $('.clientes .lista tbody').empty();
-                        for(var i in clientes){
-
-                            let {rucODni,nombreCompleto,direccionFiscal,direccionEntrega,telefono,email}=clientes[i];
-                            $('.clientes .lista tbody').append(`<tr>
-                                                                    <td>${rucODni}</td>
-                                                                    <td>${nombreCompleto}</td>
-                                                                    <td>${direccionFiscal}</td>
-                                                                    <td>${direccionEntrega}</td>
-                                                                    <td>${telefono}</td>
-                                                                    <td>${email}</td>
-                                                                    <td><a href=""><i class="material-icons">border_color</i></a></td>
-                                                                 </tr>`);
-                            
+                    //modelo
+                    var data={
+                        clientes:[],
+                        busqueda:{
+                            valor:'',
+                            filtroSeleccionadoId:1,
+                            filtros:[
+                                {
+                                    id:1,
+                                    nombre:'Dni o Ruc'
+                                },
+                                {
+                                    id:2,
+                                    nombre:'Nombre y/o apellido'
+                                }
+                            ]
                         }
 
-                    }
-                };
+                    };
 
-            /*obtener todos los clientes*/
-            $.ajax({
-                url:'/clientes',
-                method:'get',
-                success: onClientesGetSuccessListener
-            });
 
-            /*buscar cliente por dni*/
-            $('#buscar-form').on('submit',(evt)=>{
-                evt.preventDefault();
-                let dni=$('#txt-buscar').val();
-                /*obtener todos los clientes*/                
-                $.ajax({
-                    url:`/clientes/${dni}`,
-                    method:'get',
-                    success: onClientesGetSuccessListener
-                });
-            });
+                    //vista-modelo
+                    var vm = new Vue({
+                        el: "#lista-clientes",
+                        data,
+                        beforeCreate: function(){
+                            ClienteService.get()
+                                           .then((clientes)=>{
+                                                console.log(clientes);
+                                                                                                                                                                                                                            
+                                                //obtener los estados de los clientes
+                                                EstadoService.get('cliente')
+                                                             .then((estadosTabla)=>{
+                                                                    for(var i in clientes){
+                                                                        for(var ii in estadosTabla){
+                                                                            if(estadosTabla[ii].id==clientes[i].estadoId){              
+                                                                                clientes[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
 
+                                                                    this.clientes=clientes;
+                                                });
+                                            
+                                                
+                                            });
+
+                        }, //métodos
+                        methods:{
+                            onClientesGetListener:function (clientes){
+                                                console.log(clientes);
+                                                                                                                                                                                                                            
+                                                //obtener los estados de los clientes
+                                                EstadoService.get('cliente')
+                                                             .then((estadosTabla)=>{
+                                                                    for(var i in clientes){
+                                                                        for(var ii in estadosTabla){
+                                                                            if(estadosTabla[ii].id==clientes[i].estadoId){              
+                                                                                clientes[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    this.clientes=clientes;
+                                                });
+                                                
+                            },
+                            editarCliente: function(cliente){
+                                mantenerCliente.show('Editar cliente',cliente,
+                                    //cuando se modifique el cliente en el sistema
+                                    (resp)=>{
+                                            modal('Mantenimiento de clientes',resp.message);
+
+                                    });
+                            },
+                            agregarCliente: function(){
+                                mantenerCliente.show('Agregar cliente',undefined,
+                                    //cuando se agregue el cliente en el sistema
+                                    (resp,cliente)=>{
+                                            modal('Mantenimiento de clientes',resp.message);
+                                            if(resp.error==0) this.clientes.push(cliente);
+                                    }
+                                );
+                            },
+                            buscarCliente: function(){                                
+                                if(this.busqueda.valor.trim().length>0)
+                                    ClienteService.buscar(this.busqueda.valor,this.busqueda.filtroSeleccionadoId)
+                                                   .then(this.onClientesGetListener);
+                                else
+                                    ClienteService.buscar('','')
+                                                   .then(this.onClientesGetListener);
+
+                            }
+                        }
+                    });
         });
-
     </script>
 
 </body>
+
 
 
 </html>
