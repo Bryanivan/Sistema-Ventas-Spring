@@ -22,11 +22,13 @@ import com.carlos.sistemat3.entidad.Producto;
 import com.carlos.sistemat3.entidad.Cliente;
 import com.carlos.sistemat3.entidad.Proveedor;
 import com.carlos.sistemat3.entidad.EstadoTabla;
+import com.carlos.sistemat3.entidad.PlazoPago;
 import com.carlos.sistemat3.servicio.UsuarioServicio;
 import com.carlos.sistemat3.servicio.ClienteServicio;
 import com.carlos.sistemat3.servicio.ProductoServicio;
 import com.carlos.sistemat3.servicio.ProveedorServicio;
 import com.carlos.sistemat3.servicio.EstadoTablaServicio; 
+import com.carlos.sistemat3.servicio.PlazoPagoServicio;
 
 @RestController
 public class WebServiceController {
@@ -54,6 +56,10 @@ public class WebServiceController {
 	@Autowired
 	@Qualifier("estadoTablaServicio")
 	private EstadoTablaServicio estadoTablaServicio;
+		
+	@Autowired
+	@Qualifier("plazoPagoServicio")
+	private PlazoPagoServicio plazoPagoServicio;
 	
 	/*Api Usuarios*/
 	
@@ -350,9 +356,6 @@ public class WebServiceController {
 		return new Response<>(Response.STATUS_ERROR,"El id es necesario para modificar el proveedor"); 
 	}
 
-
-
-
 	
 	/*Api Estados tablas*/
 	
@@ -364,4 +367,16 @@ public class WebServiceController {
 	public Response getEstados(@PathVariable("tabla")String tabla){
 		return new Response<EstadoTabla>(Response.STATUS_OK,estadoTablaServicio.findByNombreTabla(tabla));
 	}
+	
+	
+	/*Api de facturas*/
+	
+	/*Api de estados de pago*/
+	@GetMapping("/plazos-pago")
+	public Response getPazosPago() {
+		return new Response<PlazoPago>(Response.STATUS_OK,plazoPagoServicio.all());
+	}
+	
+	/*obtener hora del sistema- pendiente*/
+	
 }

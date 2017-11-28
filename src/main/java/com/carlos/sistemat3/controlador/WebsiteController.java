@@ -12,7 +12,10 @@ public class WebsiteController {
 						 REPORTE_PRODUCTOS_VIEW="reporte_productos",
 						 REGISTRO_CLIENTES_VIEW="registro_clientes",
 						 REGISTRO_PROVEEDORES_VIEW="registro_proveedores",
-						 PERFIL_USUARIO_VIEW="user_profile"
+						 PERFIL_USUARIO_VIEW="user_profile",
+						 REPORTE_VENTAS_VIEW="reporte_ventas",
+						 REPORTE_COMPRAS_VIEW="reporte_compras",
+						 GENERAR_FACTURA_VIEW="generar_factura"
 						 ;
 	
 
@@ -43,6 +46,20 @@ public class WebsiteController {
 		return REGISTRO_PROVEEDORES_VIEW;
 	}
 
+	@GetMapping("/reporte_compras")
+	public String reporteCompras() {
+		return REPORTE_COMPRAS_VIEW;
+	}
+
+	@GetMapping("/reporte_ventas")
+	public String reporteVentas() {
+		return REPORTE_VENTAS_VIEW;
+	}
+
+	@GetMapping("/generar_factura")
+	public String generarFactura() {
+		return GENERAR_FACTURA_VIEW;
+	}
 
 	@GetMapping("/user_profile")
 	public String perfilUsuario() {
