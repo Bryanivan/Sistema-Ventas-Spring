@@ -57,7 +57,7 @@ CREATE TABLE `clientes` (
   `emailclie` varchar(60) DEFAULT NULL,
   `estadostablas_idestadostabla` int(11) DEFAULT NULL,
   PRIMARY KEY (`idclie`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,7 +66,7 @@ CREATE TABLE `clientes` (
 
 LOCK TABLES `clientes` WRITE;
 /*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
-INSERT INTO `clientes` VALUES (1,'123','carlitos','por ahi','por allá','55555555','carlitos@email.com',NULL),(2,'123','carlos sanchez','jr alamos 123','av. larco 234','55555555','carlitos@email.com',NULL),(3,'13456678','ruiz diaz','av abancay 1234','av. abancar 1234','55555555','ruiz@email.com',NULL),(4,'13456678','Jair Tarazona','av tarazona 1234','av. tarazona 1234','55555551','tarazona@email.com',NULL),(5,'-1','-1','-1','-1','-1','-1',NULL);
+INSERT INTO `clientes` VALUES (1,'76935184','Carlos Chavez Laguna','por ahí','por aca','948110940','carloscl94r@gmail.com',7),(2,'123456','Jair Tarazona','aquí','debajo de mi pantalón','3252562','tarazona.jair@cucardas.com',6);
 /*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -381,7 +381,7 @@ CREATE TABLE `plazopago` (
   `idplazopago` int(11) NOT NULL AUTO_INCREMENT,
   `descripcionplap` varchar(45) NOT NULL,
   PRIMARY KEY (`idplazopago`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -390,6 +390,7 @@ CREATE TABLE `plazopago` (
 
 LOCK TABLES `plazopago` WRITE;
 /*!40000 ALTER TABLE `plazopago` DISABLE KEYS */;
+INSERT INTO `plazopago` VALUES (1,'Al contado'),(2,'Siete'),(3,'Quince');
 /*!40000 ALTER TABLE `plazopago` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -411,7 +412,7 @@ CREATE TABLE `productos` (
   `estadostablas_idestadostabla` int(11) DEFAULT NULL,
   `proveedor_idprov` int(11) DEFAULT NULL,
   PRIMARY KEY (`idprod`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -420,7 +421,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (1,'shampoo',12.50,20.50,70.00,120.00,200,NULL,NULL),(2,'bolsa de pedigree',50.00,60.50,600.00,1000.00,250,NULL,NULL),(3,'cafe juan valdez',20.00,25.00,70.00,120.00,200,NULL,NULL),(4,'yogurt laive',4.00,5.00,25.00,40.00,200,NULL,NULL),(5,'razor mouse',200.00,300.00,700.00,1500.00,20,NULL,NULL),(6,'hololens',2500.00,10000.00,210000.00,0.00,500,NULL,NULL),(7,'Manual de spring 4',50.00,70.00,300.00,700.00,20,NULL,NULL),(8,'Cursos udemy',10.00,15.00,70.00,150.00,900,NULL,NULL),(9,'Pasajes de avión a Rusia 2018',400.00,4500.00,100.00,200.00,90,NULL,NULL);
+INSERT INTO `productos` VALUES (1,'comida de perro dog chow',550.00,60.55,600.00,1000.00,300,3,NULL),(2,'Detergente',1.50,2.50,20.00,30.00,100,3,NULL),(3,'Cerveza pilsen callao',1.50,55.00,20.00,300.00,1000,5,NULL),(4,'arduino',20.00,45.00,150.00,300.00,200,3,NULL),(5,'chinuino',20.00,30.00,60.00,120.00,1,3,NULL);
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -439,7 +440,7 @@ CREATE TABLE `proveedor` (
   `telefonoprov` varchar(12) DEFAULT NULL,
   `estadostablas_idestadostabla` int(11) DEFAULT NULL,
   PRIMARY KEY (`idprov`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -448,7 +449,7 @@ CREATE TABLE `proveedor` (
 
 LOCK TABLES `proveedor` WRITE;
 /*!40000 ALTER TABLE `proveedor` DISABLE KEYS */;
-INSERT INTO `proveedor` VALUES (1,'empresa nubelus society','12356789101','contacto@nubelus.com','5552234554',NULL);
+INSERT INTO `proveedor` VALUES (1,'Pet Society','123454321','contacto@petsociety.com','95112399',1),(2,'Cucardas','98875123','contacto@cucardas.com','91231239',1);
 /*!40000 ALTER TABLE `proveedor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -609,4 +610,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-20  1:12:12
+-- Dump completed on 2017-11-28 13:03:05
