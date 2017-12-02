@@ -36,13 +36,15 @@
                                             <th>Nombre</th>
                                             <th>Precio compra</th>
                                             <th>Precio venta</th>
-                                            <th>Precio por 7 unid.</th>
-                                            <th>Precio por 15 unid.</th>
+                                            <th>Precio en plazo de 7</th>
+                                            <th>Precio en plazo de 15</th>
                                             <th>Stock</th>
                                             <th>Estado</th>
                                             <th>Selección</th>
                                         </thead>
                                         <tbody>      
+                                            <!--si no hay productos mostrar-->
+                                            <tr v-if="productos.length==0"><td colspan="6" textAlign="center">Lista Vacía</td></tr>
                                             <!--vista-->                                   
                                             <tr v-for="(producto,index) in productos">
                                                 <td>{{producto.descripcion}}</td>

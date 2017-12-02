@@ -14,15 +14,15 @@
                 <div class="container-fluid">
                     <div class="row">                        
                         <div class="col-md-12">
-                            <div class="card productos">
+                            <div class="card ventas">
                                 <div class="card-header" data-background-color="purple">
                                     <h4 class="title">Ventas</h4>
                                     <p class="category">Listado de facturas</p>
                                 </div>
-                                <div  id="lista-productos" class="card-content table-responsive">
+                                <div  id="lista-ventas" class="card-content table-responsive">
                                 	<!--botón agregar nuevo-->
                                     <div class="row col-md-12">             
-                                        <a id="btn-agregar-producto" 
+                                        <a id="btn-agregar-venta" 
                                            class="btn btn-white btn-just-icon btn-round"
                                            href="./generar_factura"
                                            data-toggle="tooltip" 
@@ -43,31 +43,31 @@
                                               </select>
                                             </div>
                                             <!--botón-->
-    			                            <button @click="buscarProducto" class="btn btn-white btn-round btn-just-icon">
+    			                            <button @click="buscarVenta" class="btn btn-white btn-round btn-just-icon">
     			                                <i class="material-icons">search</i>
     			                                <div class="ripple-container"></div>
     			                            </button>
     			                        </div>
                                     </div>
-                                    <!--lista de productos en tabla-->
+                                    <!--lista de ventas en tabla-->
                                     <table class="table lista">
                                         <thead class="text-primary">
                                             <th>Código</th>
                                             <th>Cliente</th>
-                                            <th>Monto</th>
+                                            <th>Total</th>
                                             <th>Fecha</th>
                                             <th>Estado</th>
                                             <th>Acciones</th>
                                         </thead>
                                         <tbody>      
                                             <!--vista-->                                   
-                                            <tr v-for="producto in productos">
-                                                <td>{{producto.descripcion}}</td>               
-                                                <td>{{producto.precioVenta}}</td>
-                                                <td>{{producto.precioPack7}}</td>
-                                                <td class="text-primary">S/. {{producto.precioPack15}}</td>
-                                                <td class="text-primary">{{producto.estado}}</td>
-                                                <td><a @click="editarProducto(producto)" href="#editar-producto"><i class="material-icons">border_color</i></a></td>
+                                            <tr v-for="venta in ventas">
+                                                <td>N°{{(venta.tipo=='facturas'? venta.codigo : venta.id )}}</td>
+                                                <td>{{venta.clienteId}}</td>
+                                                <td class="text-primary">S/. {{venta.total}}</td>
+                                                <td>{{venta.fechaEmision}}</td>
+                                                <td>{{venta.estado}}</td>
+                                                <td><a @click="editarVenta(venta)" href="#editar-venta"><i class="material-icons">border_color</i></a></td>
                                              </tr>
                                         </tbody>
                                     </table>
@@ -85,16 +85,17 @@
 
     <!--dependencias JS-->
     <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
-    <div th:replace="fragments/mantener_producto :: mantener-producto"></div> 
+    <!--<div th:replace="fragments/mantener_venta :: mantener-venta"></div> -->
 
-    <!--obtener servicio de producto-->
-    <script th:src="@{/app/productoService.js}"></script>
+    <!--obtener servicio de venta-->
+    <script th:src="@{/app/facturaService.js}"></script>
+    <script th:src="@{/app/notaVentaService.js}"></script>
 
     <script type="text/javascript">        
-        /*$(document).ready(function() {
+        $(document).ready(function() {
                     //modelo
                     var data={
-                        productos:[],
+                        ventas:[],
                         busqueda:{
                             valor:'',
                             filtroSeleccionadoId:1,
@@ -105,7 +106,7 @@
                                 },
                                 {
                                     id:2,
-                                    nombre:'nombre'
+                                    nombre:'fecha'
                                 }
                             ]
                         }
@@ -115,26 +116,49 @@
 
                     //vista-modelo
                     var vm = new Vue({
-                        el: "#lista-productos",
+                        el: "#lista-ventas",
                         data,
                         beforeCreate: function(){
-                            ProductoService.get()
-                                           .then((productos)=>{
-                                                console.log(productos);
+                            this.ventas=[];
+                            FacturaService.get()
+                                           .then((facturas)=>{
+                                                console.log(facturas);
                                                                                                                                                                                                                             
-                                                //obtener los estados de los productos
-                                                EstadoService.get('producto')
+                                                //obtener los estados de los ventas
+                                                EstadoService.get('factura')
                                                              .then((estadosTabla)=>{
-                                                                    for(var i in productos){
+                                                                    for(var i in facturas){                
+                                                                        facturas[i].tipo="facturas";                    
                                                                         for(var ii in estadosTabla){
-                                                                            if(estadosTabla[ii].id==productos[i].estadoId){              
-                                                                                productos[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                            if(estadosTabla[ii].id==facturas[i].estadoId){
+                                                                                facturas[i].estado=estadosTabla[ii].estado.descripcion;
                                                                                 break;
                                                                             }
                                                                         }
+                                                                        this.ventas.push(facturas[i]);
                                                                     }
+                                                });
+                                            
+                                                
+                                            });
 
-                                                                    this.productos=productos;
+                            NotaVentaService.get()
+                                           .then((notaVentas)=>{
+                                                console.log(notaVentas);
+                                                                                                                                                                                                                            
+                                                //obtener los estados de los ventas
+                                                EstadoService.get('factura')
+                                                             .then((estadosTabla)=>{
+                                                                    for(var i in notaVentas){
+                                                                        notaVentas[i].tipo="notas-venta";
+                                                                        for(var ii in estadosTabla){
+                                                                            if(estadosTabla[ii].id==notaVentas[i].estadoId){
+                                                                                notaVentas[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        this.ventas.push(notaVentas[i]);
+                                                                    }
                                                 });
                                             
                                                 
@@ -142,55 +166,54 @@
 
                         }, //métodos
                         methods:{
-                            onProductosGetListener:function (productos){
-                                                console.log(productos);
+                            onVentasGetListener:function (ventas){
+                                                console.log(ventas);
                                                                                                                                                                                                                             
-                                                //obtener los estados de los productos
-                                                EstadoService.get('producto')
+                                                //obtener los estados de los ventas
+                                                EstadoService.get('factura')
                                                              .then((estadosTabla)=>{
-                                                                    for(var i in productos){
+                                                                    for(var i in ventas){
                                                                         for(var ii in estadosTabla){
-                                                                            if(estadosTabla[ii].id==productos[i].estadoId){              
-                                                                                productos[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                            if(estadosTabla[ii].id==ventas[i].estadoId){              
+                                                                                ventas[i].estado=estadosTabla[ii].estado.descripcion;
                                                                                 break;
                                                                             }
                                                                         }
                                                                     }
 
-                                                                    this.productos=productos;
+                                                                    this.ventas=ventas;
                                                 });
                                                 
                             },
-                            editarProducto: function(producto){
-                                mantenerProducto.show('Editar producto',producto,
-                                    //cuando se modifique el producto en el sistema
+                            editarVenta: function(venta){
+                                /*mantenerVenta.show('Editar venta',venta,
+                                    //cuando se modifique el venta en el sistema
                                     (resp)=>{
-                                            modal('Mantenimiento de productos',resp.message);
+                                            modal('Mantenimiento de ventas',resp.message);
 
-                                    });
+                                    });*/
                             },
-                            agregarProducto: function(){
-                                mantenerProducto.show('Agregar producto',undefined,
-                                    //cuando se agregue el producto en el sistema
-                                    (resp,producto)=>{
-                                            modal('Mantenimiento de productos',resp.message);
-                                            if(resp.error==0) this.productos.push(producto);
+                            agregarVenta: function(){
+                                /*mantenerVenta.show('Agregar venta',undefined,
+                                    //cuando se agregue el venta en el sistema
+                                    (resp,venta)=>{
+                                            modal('Mantenimiento de ventas',resp.message);
+                                            if(resp.error==0) this.ventas.push(venta);
                                     }
-                                );
+                                );*/
                             },
-                            buscarProducto: function(){                                
-                                if(this.busqueda.valor.trim().length>0)
-                                    ProductoService.buscar(this.busqueda.valor,this.busqueda.filtroSeleccionadoId)
-                                                   .then(this.onProductosGetListener);
+                            buscarVenta: function(){                                
+                                /*if(this.busqueda.valor.trim().length>0)
+                                    VentaService.buscar(this.busqueda.valor,this.busqueda.filtroSeleccionadoId)
+                                                   .then(this.onVentasGetListener);
                                 else
-                                    ProductoService.buscar('','')
-                                                   .then(this.onProductosGetListener);
-
+                                    VentaService.buscar('','')
+                                                   .then(this.onVentasGetListener);
+                                */
                             }
                         }
                     });
         });
-        */
     </script>
 
 </body>

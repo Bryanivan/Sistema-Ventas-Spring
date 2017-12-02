@@ -15,7 +15,8 @@ public class WebsiteController {
 						 PERFIL_USUARIO_VIEW="user_profile",
 						 REPORTE_VENTAS_VIEW="reporte_ventas",
 						 REPORTE_COMPRAS_VIEW="reporte_compras",
-						 GENERAR_FACTURA_VIEW="generar_factura"
+						 GENERAR_FACTURA_VIEW="generar_factura",
+						 GENERAR_ORDEN_COMPRA_VIEW="generar_orden_compra"
 						 ;
 	
 
@@ -61,6 +62,11 @@ public class WebsiteController {
 		return GENERAR_FACTURA_VIEW;
 	}
 
+	@GetMapping("/generar_orden_compra")
+	public String generarOrdenCompra() {
+		return GENERAR_ORDEN_COMPRA_VIEW;
+	}
+	
 	@GetMapping("/user_profile")
 	public String perfilUsuario() {
 		return PERFIL_USUARIO_VIEW;

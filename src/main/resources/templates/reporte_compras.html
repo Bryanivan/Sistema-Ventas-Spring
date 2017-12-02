@@ -23,8 +23,8 @@
                                 	<!--botón agregar nuevo-->
                                     <div class="row col-md-12">             
                                         <a id="btn-agregar-ordenCompra" 
-                                           class="btn btn-white btn-just-icon btn-round" @click="agregarProducto" 
-                                           href="#agregar-ordenCompra"
+                                           class="btn btn-white btn-just-icon btn-round" 
+                                           href="./generar_orden_compra"
                                            data-toggle="tooltip" 
                                            title="Agregar orden de compra">
                                               <i class="material-icons">note_add</i>
@@ -43,7 +43,7 @@
                                               </select>
                                             </div>
                                             <!--botón-->
-    			                            <button @click="buscarProducto" class="btn btn-white btn-round btn-just-icon">
+    			                            <button @click="buscarOrdenCompra" class="btn btn-white btn-round btn-just-icon">
     			                                <i class="material-icons">search</i>
     			                                <div class="ripple-container"></div>
     			                            </button>
@@ -57,20 +57,19 @@
                                             <th>Proveedor</th>
                                             <th>Fecha</th>
                                             <th>Total</th>
-                                            <th>Fecha</th>
-                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </thead>
                                         <tbody>      
                                             <!--vista-->                                   
                                             <tr v-for="ordenCompra in ordenCompras">
-                                                <td>{{ordenCompra.descripcion}}</td>
-                                                <td>{{ordenCompra.precioVenta}}</td>
-                                                <td>{{ordenCompra.precioPack7}}</td>
-                                                <td>{{ordenCompra.precioPack7}}</td>
-                                                <td class="text-primary">S/. {{ordenCompra.precioPack15}}</td>
-                                                <td class="text-primary">{{ordenCompra.estado}}</td>
-                                                <td><a @click="editarProducto(ordenCompra)" href="#editar-ordenCompra"><i class="material-icons">border_color</i></a></td>
+                                                <td>N°{{ordenCompra.id}}</td>
+                                                <td>{{ordenCompra.proveedorId}}</td>            
+                                                <td>{{ordenCompra.fecha}}</td>
+                                                <td class="text-primary">S/. {{ordenCompra.total}}</td>
+                                                <td>
+                                                    <a @click="editarOrdenCompra(ordenCompra)" href="#editar-ordenCompra"><i class="material-icons">border_color</i></a>
+                                                    <a @click="verOrdenCompra(ordenCompra)" href="#ver-ordenCompra"><i class="material-icons">visibility</i></a>
+                                                </td>
                                              </tr>
                                         </tbody>
                                     </table>
@@ -90,11 +89,11 @@
     <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
     <!--<div th:replace="fragments/mantener_ordenCompra :: mantener-ordenCompra"></div> -->
 
-    <!--obtener servicio de ordenCompra
-    <script th:src="@{/app/ordenCompraService.js}"></script>-->
+    <!--obtener servicio de ordenCompra-->
+    <script th:src="@{/app/ordenCompraService.js}"></script>
 
     <script type="text/javascript">        
-        /*$(document).ready(function() {
+        $(document).ready(function() {
                     //modelo
                     var data={
                         ordenCompras:[],
@@ -121,79 +120,45 @@
                         el: "#lista-ordenCompras",
                         data,
                         beforeCreate: function(){
-                            ProductoService.get()
+                            OrdenCompraService.get()
                                            .then((ordenCompras)=>{
                                                 console.log(ordenCompras);
-                                                                                                                                                                                                                            
-                                                //obtener los estados de los ordenCompras
-                                                EstadoService.get('ordenCompra')
-                                                             .then((estadosTabla)=>{
-                                                                    for(var i in ordenCompras){
-                                                                        for(var ii in estadosTabla){
-                                                                            if(estadosTabla[ii].id==ordenCompras[i].estadoId){              
-                                                                                ordenCompras[i].estado=estadosTabla[ii].estado.descripcion;
-                                                                                break;
-                                                                            }
-                                                                        }
-                                                                    }
-
-                                                                    this.ordenCompras=ordenCompras;
-                                                });
-                                            
-                                                
+                                                this.ordenCompras=ordenCompras;
                                             });
 
                         }, //métodos
                         methods:{
-                            onProductosGetListener:function (ordenCompras){
-                                                console.log(ordenCompras);
-                                                                                                                                                                                                                            
-                                                //obtener los estados de los ordenCompras
-                                                EstadoService.get('ordenCompra')
-                                                             .then((estadosTabla)=>{
-                                                                    for(var i in ordenCompras){
-                                                                        for(var ii in estadosTabla){
-                                                                            if(estadosTabla[ii].id==ordenCompras[i].estadoId){              
-                                                                                ordenCompras[i].estado=estadosTabla[ii].estado.descripcion;
-                                                                                break;
-                                                                            }
-                                                                        }
-                                                                    }
-
-                                                                    this.ordenCompras=ordenCompras;
-                                                });
-                                                
-                            },
-                            editarProducto: function(ordenCompra){
-                                mantenerProducto.show('Editar ordenCompra',ordenCompra,
+                            editarOrdenCompra: function(ordenCompra){
+                                /*mantenerOrdenCompra.show('Editar ordenCompra',ordenCompra,
                                     //cuando se modifique el ordenCompra en el sistema
                                     (resp)=>{
                                             modal('Mantenimiento de ordenCompras',resp.message);
 
-                                    });
+                                    });*/
                             },
-                            agregarProducto: function(){
-                                mantenerProducto.show('Agregar ordenCompra',undefined,
+                            agregarOrdenCompra: function(){
+                                /*mantenerOrdenCompra.show('Agregar ordenCompra',undefined,
                                     //cuando se agregue el ordenCompra en el sistema
                                     (resp,ordenCompra)=>{
                                             modal('Mantenimiento de ordenCompras',resp.message);
                                             if(resp.error==0) this.ordenCompras.push(ordenCompra);
                                     }
-                                );
+                                );*/
                             },
-                            buscarProducto: function(){                                
+                            buscarOrdenCompra: function(){                                
                                 if(this.busqueda.valor.trim().length>0)
-                                    ProductoService.buscar(this.busqueda.valor,this.busqueda.filtroSeleccionadoId)
-                                                   .then(this.onProductosGetListener);
+                                    OrdenCompraService.buscar(this.busqueda.valor,this.busqueda.filtroSeleccionadoId);
                                 else
-                                    ProductoService.buscar('','')
-                                                   .then(this.onProductosGetListener);
+                                    OrdenCompraService.buscar('','');
 
+                            },
+                            verOrdenCompra:function(ordenCompra){
+                                modal('chuma','chuma');
                             }
                         }
                     });
         });
-        */
+        
     </script>
 
 </body>

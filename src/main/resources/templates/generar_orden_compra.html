@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <!--título de web, metas, dependencias CSS/JS-->
-<head th:include="fragments/header :: header (pageName='Generar factura')">
+<head th:include="fragments/header :: header (pageName='Generar orden de compra')">
 </head>
 
 <body>
@@ -16,85 +16,30 @@
                         <div class="col-md-12">
                             <div class="card ordenCompras">
                                 <div class="card-header" data-background-color="purple">
-                                    <h4 class="title">Generar factura (o nota de venta)</h4>
+                                    <h4 class="title">Generar orden de compra</h4>
                                 </div>
-                                <div  id="factura" class="card-content table-responsive">
+                                <div  id="ordenCompra" class="card-content table-responsive">
                                     <form>
+
+                                        <!--formulario de proveedor-->
                                         <fieldset>
-                                            <h5 class="text-primary">Datos Factura</h5>
-                                            <div class="row">
-                                              <div class="col-md-6">
-                                                  <div class="form-group">
-                                                      <label class="control-label">Tiempo pago</label>
-                                                      <select class="control-label" class="form-control" v-model="factura.plazoPagoId">
-                                                          <option v-for="plazoPago in plazosPago" v-bind:value="plazoPago.id">{{plazoPago.descripcion}}</option>
-                                                      </select>
-                                                  </div>
-                                              </div>
-
-                                              <div class="col-md-6">
-                                                  <div class="form-group">
-                                                      <label class="control-label"></label>
-                                                      <input type="text" class="form-control" v-model="codigoVenta" disabled="" />
-                                                  </div>
-                                              </div>
-                                            </div>
-
-                                            <div class="row">
-                                              <div class="col-md-4">
-                                                  <div class="form-group">
-                                                      <label class="control-label">Tipo documento</label>
-                                                      <div class="radio">
-                                                            <label>
-                                                                <input type="radio" name="optionsRadios" v-model="tipoVenta" value="notas-venta" checked>
-                                                                Nota venta
-                                                            </label>
-                                                      </div>
-                                                      <div class="radio">
-                                                            <label>
-                                                                <input type="radio" name="optionsRadios" v-model="tipoVenta" value="facturas">
-                                                                Factura
-                                                            </label>
-                                                      </div>
-                                                  </div>
-                                              </div>
-
-                                              <div class="col-md-4">
-                                                  <div class="form-group">
-                                                      <label class="control-label">Fecha Emisión</label>
-                                                      <input type="date" id="fecha-emision" class="form-control" v-model="factura.fechaEmision" />
-                                                  </div>
-                                              </div>
-
-
-                                              <div class="col-md-4" v-if="tipoVenta=='facturas'">
-                                                  <div class="form-group">
-                                                      <label class="control-label">Fecha Vencimiento</label>
-                                                      <input type="date" class="form-control" v-model="factura.fechaVencimiento" v-bind:min="factura.fechaEmision" />
-                                                  </div>
-                                              </div>
-                                            </div>
-                                        </fieldset>
-
-                                        <!--formulario de cliente-->
-                                        <fieldset>
-                                            <h5 class="text-primary">Datos Cliente</h5>
+                                            <h5 class="text-primary">Datos de Proveedor</h5>
                                             <div class="row">
                                                 <div class="col-md-6">
                                                       <div class="form-group">
                                                           <label class="control-label">Nombre</label>
-                                                          <input type="text" class="form-control" disabled v-model="cliente.nombreCompleto"/>
+                                                          <input type="text" class="form-control" disabled v-model="proveedor.razonSocial"/>
                                                       </div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                      <input type="button" @click="buscarCliente" class="btn btn-default right" value="Buscar" />
+                                                      <input type="button" @click="buscarProveedor" class="btn btn-default right" value="Buscar" />
                                                 </div>
                                             </div>
                                             <div class="row">                                                
-                                                <div class="col-md-12">
+                                                <div class="col-md-6 col-sm-12">
                                                       <div class="form-group">
-                                                          <label class="control-label">Dirección</label>
-                                                          <textarea  v-model="cliente.direccionFiscal" class="form-control" disabled></textarea>
+                                                          <label class="control-label">Ruc</label>
+                                                          <textarea  v-model="proveedor.ruc" class="form-control" disabled></textarea>
                                                       </div>
                                                 </div>
                                             </div>
@@ -102,19 +47,19 @@
                                             <div class="row">
                                                 <div class="col-md-6">
                                                       <div class="form-group">
-                                                          <label class="control-label">DNI o RUC</label>
-                                                          <input type="text" class="form-control" disabled v-model="cliente.rucODni"/>
+                                                          <label class="control-label">Telefono</label>
+                                                          <input type="text" class="form-control" disabled v-model="proveedor.telefono"/>
                                                       </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                       <div class="form-group">
-                                                          <label class="control-label">Telefono</label>
-                                                          <input type="text" class="form-control" disabled v-model="cliente.telefono"/>
+                                                          <label class="control-label">Email</label>
+                                                          <input type="text" class="form-control" disabled v-model="proveedor.email"/>
                                                       </div>
                                                 </div>
                                             </div>
-
                                         </fieldset>
+
 
                                         <!--formulario de producto-->
                                         <fieldset>
@@ -147,8 +92,8 @@
                                                 <div class="col-md-4">
                                                       <!--dependerá del plazo de pago-->
                                                       <div class="form-group">
-                                                          <label class="control-label">Precio unitario</label>
-                                                          <input type="text" class="form-control" disabled v-model="producto.precioVentaFinal"/>
+                                                          <label class="control-label">Precio unitario de compra</label>
+                                                          <input type="text" class="form-control" disabled v-model="producto.precioCompra"/>
                                                       </div>
                                                 </div>
                                                 <div class="col-md-2">
@@ -173,7 +118,7 @@
                                                     <th>Código</th>
                                                     <th>Nombre</th>
                                                     <th>Cantidad</th>
-                                                    <th>Prec. Venta</th>
+                                                    <th>Prec. Compra</th>
                                                     <th>SubTotal</th> <!--calcular-->
                                                     <th>Acciones</th>
                                                 </thead>
@@ -188,8 +133,8 @@
                                                         <td>{{producto.id}}</td>
                                                         <td class="text-primary">{{producto.descripcion}}</td>
                                                         <td class="text-primary">{{producto.cantidad}}</td>
-                                                        <td>S/.{{producto.precioVentaFinal}}</td>
-                                                        <td class="text-primary">{{producto.precioVentaFinal*producto.cantidad | currency}}</td>
+                                                        <td>S/.{{producto.precioCompra}}</td>
+                                                        <td class="text-primary">{{producto.precioCompra*producto.cantidad | currency}}</td>
                                                         <td><a @click="quitarProducto(index)" href="#editar-producto">
                                                             <i class="material-icons">clear</i>
                                                         </a></td>                   
@@ -204,35 +149,28 @@
                                                 
                                                         <div class="form-group">
                                                             <label class="control-label">SubTotal
-                                                              <input type="text" class="form-control"  disabled="" v-model="factura.subTotal"/>
+                                                              <input type="text" class="form-control"  disabled="" v-model="ordenCompra.subTotal"/>
                                                             </label>
                                                         </div>
                                                 
                                                 
                                                         <div class="form-group">
                                                             <label class="control-label">IGV
-                                                              <input type="text" class="form-control"  disabled="" v-model="factura.igv"/>
+                                                              <input type="text" class="form-control"  disabled="" v-model="ordenCompra.igv"/>
                                                             </label>
                                                         </div>
-                                                
-                                                
-                                                        <div class="form-group">
-                                                            <label class="control-label">Descuento
-                                                              <input type="number" step="0.01" class="form-control" v-model="factura.descuento"/>
-                                                            </label>
-                                                        </div>
-                                                
+
                                                 
                                                         <div class="form-group">
                                                             <label class="control-label">Total
-                                                              <input type="text" class="form-control"  disabled="" v-model="factura.total" />
+                                                              <input type="text" class="form-control"  disabled="" v-model="ordenCompra.total" />
                                                             </label>
                                                         </div>                                        
                                                 </div>
                                           
                                                 <div class="form-group flex-item-center">
                                                   <label>
-                                                    <input type="button" class="btn btn-default" value="Pagar" @click="registrarFacturaNotaVenta" />
+                                                    <input type="button" class="btn btn-default" value="Registrar" @click="registrarOrdenCompra" />
                                                   </label>
                                                 </div>
                                                 
@@ -256,14 +194,14 @@
 
     <!--modal de buscar producto-->
     <div th:replace="fragments/buscar_producto :: buscar-producto"></div> 
-    <!--modal de buscar cliente-->
-    <div th:replace="fragments/buscar_cliente :: buscar-cliente"></div> 
+    <!--modal de buscar proveedor-->
+    <div th:replace="fragments/buscar_proveedor :: buscar-proveedor"></div>
 
     
     <!--obtener servicio de venta-->
-    <script th:src="@{/app/facturaService.js}"></script>
+    <script th:src="@{/app/ordenCompraService.js}"></script>
     <script th:src="@{/app/notaVentaService.js}"></script>
-    <script th:src="@{/app/detalleVentaService.js}"></script>
+    <script th:src="@{/app/detalleCompraService.js}"></script>
 
 
     <script type="text/javascript">                
@@ -277,151 +215,108 @@
                     //modelo
                     //YYYY-MM-DD HH:MM:SS
                     var data={
-                        tipoVenta:'facturas',//facturas o notas-venta                        
-                        ventaId:0,
-                        notaVentaId:1,//valor por defecto
-                        factura:{ 
-                          codigo:'001-1', //valor por defecto
-                          fechaEmision:'2017-11-30',
-                          fechaVencimiento: '2017-11-30',
+                        compraId:0,
+                        ordenCompra:{ 
+                          proveedorId:1,
                           subTotal:0.0,
-                          descuento:0.0,
                           igv:0.0,
-                          total:0.0,                                                   
-                          empleadoId:1,
-                          plazoPagoId:1,
-                          estadoId:10,
-                          clienteId:1                          
+                          total:0.0,
+                          fecha:'2017-11-30',
                         },
-                        cliente:{
+                        proveedor:{
                             id:0,
-                            rucODni:'',
-                            nombreCompleto:'',
-                            direccionFiscal:'',
-                            direccionEntrega:'',
-                            telefono:'',
+                            ruc:'',
+                            razonSocial:'',
                             email:'',
-                            estadoId:6,                            
+                            telefono:'',
+                            estadoId:1,
                             estado:'0',
                         },
                         producto:{
                           id:0,
                           descripcion:'',
+                          precio:0.0, //precio de compra
                           precioCompra:0.0,
                           precioVenta:0.0,
                           precioPack7:0.0,
-                          precioPack15:0.0,
-                          precioVentaFinal:0.0,
+                          precioPack15:0.0,                          
                           stock:0,
                           estadoId:0,
                           estado:'0',
                           cantidad:0,
                         },
-                        productos:[],
-                        plazosPago:[],                        
-                        busqueda:{
-
-                        }
+                        productos:[]
 
                     };
 
 
 
                     var calcularTotal=function (val) {                              
-                              this.factura.igv=parseFloat(0.18*this.factura.subTotal).toFixed(2);
-                              this.factura.total = parseFloat(1.18*this.factura.subTotal - this.factura.descuento).toFixed(2);
+                              this.ordenCompra.igv=parseFloat(0.18*this.ordenCompra.subTotal).toFixed(2);
+                              this.ordenCompra.total = parseFloat(1.18*this.ordenCompra.subTotal).toFixed(2);
                     };
 
                     //vista-modelo
                     vm = new Vue({
-                        el: "#factura",
+                        el: "#ordenCompra",
                         data,
-                        beforeCreate: function(){
-                            //obteniendo los plazos de pago para el combo
-                            $.ajax({
-                                  url:'/plazos-pago',
-                                  method:'get',
-                                  success:(resp)=>{
-                                    if(resp.error==0) this.plazosPago=resp.data;
-                                  }
-                                });                            
-                            //obtener el último código de factura y nota de venta para generar un preview del siguiente
-                             FacturaService.getLastRowIndex()
-                                           .then((index)=>{
-                                              this.factura.codigo='001-'+(index+1);
-                                           });
-
-                             NotaVentaService.getLastRowIndex()
-                                             .then((index)=>{
-                                                this.notaVentaId=index;
-                                             });
+                        beforeCreate: function(){                        
 
                             //setear las fechas por defecto
                             hoy=new Date();
                             prefix=(hoy.getDate()<10?'0':'');
-                            this.factura.fechaEmision=`${hoy.getFullYear()}-${hoy.getMonth()+1}-${prefix+hoy.getDate()}`;
-                            this.factura.fechaVencimiento=`${hoy.getFullYear()}-${hoy.getMonth()+1}-0${hoy.getDate()}`;
+                            this.ordenCompra.fecha=`${hoy.getFullYear()}-${hoy.getMonth()+1}-${prefix+hoy.getDate()}`;
 
                         }, //métodos
                         watch:{                           
-                            'factura.subTotal': calcularTotal,
-                            'factura.descuento': calcularTotal,
-                            'factura.plazoPagoId': function(val){
-                              //cada vez que cambien de plazo pago, cambiar el precio de venta final
-                               this.cambiarPrecioVentaFinalDeProducto();
-                            }
-                        },
-                        computed:{
-                          codigoVenta: function(){
-                              return 'N°'+(this.tipoVenta=='facturas'?this.factura.codigo:this.notaVentaId);
-                          }
+                            'ordenCompra.subTotal': calcularTotal                            
                         },
                         methods:{
-                            registrarFacturaNotaVenta:function(){                               
-                                this.factura.clienteId=this.cliente.id;
+                            registrarOrdenCompra:function(){
+                                this.ordenCompra.proveedorId=this.proveedor.id;
                                 $.ajax({
-                                  url:'/'+this.tipoVenta,
+                                  url:'/ordenes-compra',
                                   method:'post',
-                                  data:JSON.stringify(this.factura),
+                                  data:JSON.stringify(this.ordenCompra),
                                   headers: {
                                     "content-type": "application/json"
                                   },
                                   success:(resp)=>{
-                                      modal('Generar Factura',resp.message);
+                                      modal('Generar OrdenCompra',resp.message);
                                       //redireccionar al reporte de ventas
                                       if(resp.error==0) {
-                                        this.ventaId=resp.data[0].id;
-                                        this.registrarDetalleVenta();
+                                        this.compraId=resp.data[0].id;
+                                        this.registrarDetalleCompra();
                                       }
-                                      console.log(resp.data);                                        
 
                                   }
 
                                 });
                             },
                             //método recursivo
-                            registrarDetalleVenta:function (){
+                            registrarDetalleCompra:function (){
+                              
                               if(this.productos.length>0)
-                                DetalleVentaService.save(this.productos[0],this.tipoVenta,this.ventaId)
+                                DetalleCompraService.save(this.productos[0],this.compraId)
                                                    .then((resp)=>{
                                                       if(resp.error==0){
                                                         this.productos.splice(0,1); //eliminar el primer elemento
-                                                        this.registrarDetalleVenta();
+                                                        this.registrarDetalleCompra();
                                                       }
                                                       else
-                                                        modal('Generar Factura',resp.message);
+                                                        modal('Generar OrdenCompra',resp.message);
                                                    });
                               else //umbral, redireccionar
-                                  window.location="./reporte_ventas"
+                                  window.location="./reporte_compras";
                             },
-                            buscarCliente: function(){
-                                buscarCliente.show(
-                                    //cuando se seleccione el cliente de la otra pantalla
-                                    (resp,cliente)=>{
-                                            modal('Generar factura',resp.message);
+                            buscarProveedor: function(){
+                                buscarProveedor.show(
+                                    //cuando se seleccione el proveedor de la otra pantalla
+                                    (resp,proveedor)=>{
+                                            modal('Generar ordenCompra',resp.message);
                                             if(resp.error==0) {                                              
-                                              for(var attr in this.cliente)
-                                                  this.cliente[attr]=cliente[attr];
+                                              for(var attr in this.proveedor)
+                                                  this.proveedor[attr]=proveedor[attr];
                                             }
 
                                     });
@@ -429,26 +324,18 @@
                             realizarSumatoria: function(){
                                 let sumatoria=0;
                                   for(var i in this.productos)                                
-                                    sumatoria+=this.productos[i].cantidad*this.productos[i].precioVentaFinal;
-                                this.factura.subTotal=sumatoria;
-                            },
-                            cambiarPrecioVentaFinalDeProducto:function(){
-                                let {plazoPagoId} =this.factura;
-                                let {precioVenta,precioPack7,precioPack15}=this.producto;
-                                this.producto.precioVentaFinal=(plazoPagoId==1?precioVenta:
-                                                               (plazoPagoId==2?precioPack7:
-                                                                                precioPack15));
+                                    sumatoria+=this.productos[i].cantidad*this.productos[i].precioCompra;
+                                this.ordenCompra.subTotal=sumatoria;
                             },
                             buscarProducto: function(){
                                 buscarProducto.show(
-                                    //cuando se seleccione el cliente de la otra pantalla
+                                    //cuando se seleccione el proveedor de la otra pantalla
                                     (resp,producto)=>{
-                                            modal('Generar factura',resp.message);
+                                            modal('Generar ordenCompra',resp.message);
                                             if(resp.error==0) {                                              
                                               for(var attr in this.producto)
                                                   this.producto[attr]=producto[attr];
-                                              this.producto.cantidad=0;
-                                              this.cambiarPrecioVentaFinalDeProducto();
+                                              this.producto.cantidad=0;                                              
                                             }
 
                                     });
@@ -466,7 +353,7 @@
                                 this.realizarSumatoria();
                                 this.cleanProducto();
                               } 
-                              else modal('Generar factura','Seleccione primero un producto antes de agregar al carrito');
+                              else modal('Generar Orden de Compra','Seleccione primero un producto antes de agregar al carrito');
                             },
                             //limpiar formulario de producto
                             cleanProducto: function(){
@@ -476,8 +363,7 @@
                                   precioCompra:0.0,
                                   precioVenta:0.0,                                  
                                   precioPack7:0.0,
-                                  precioPack15:0.0,
-                                  precioVentaFinal:0.0,
+                                  precioPack15:0.0,                                  
                                   stock:0,
                                   estadoId:0,
                                   estado:'0',

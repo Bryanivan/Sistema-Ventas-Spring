@@ -1,6 +1,8 @@
 package com.carlos.sistemat3.controlador;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -23,12 +25,24 @@ import com.carlos.sistemat3.entidad.Cliente;
 import com.carlos.sistemat3.entidad.Proveedor;
 import com.carlos.sistemat3.entidad.EstadoTabla;
 import com.carlos.sistemat3.entidad.PlazoPago;
+import com.carlos.sistemat3.entidad.Empleado;
+import com.carlos.sistemat3.entidad.Factura;
+import com.carlos.sistemat3.entidad.NotaVenta;
+import com.carlos.sistemat3.entidad.DetalleVenta;
+import com.carlos.sistemat3.entidad.OrdenCompra;
+import com.carlos.sistemat3.entidad.DetalleCompra;
 import com.carlos.sistemat3.servicio.UsuarioServicio;
 import com.carlos.sistemat3.servicio.ClienteServicio;
 import com.carlos.sistemat3.servicio.ProductoServicio;
 import com.carlos.sistemat3.servicio.ProveedorServicio;
 import com.carlos.sistemat3.servicio.EstadoTablaServicio; 
 import com.carlos.sistemat3.servicio.PlazoPagoServicio;
+import com.carlos.sistemat3.servicio.EmpleadoServicio;
+import com.carlos.sistemat3.servicio.FacturaServicio;
+import com.carlos.sistemat3.servicio.NotaVentaServicio;
+import com.carlos.sistemat3.servicio.DetalleVentaServicio;
+import com.carlos.sistemat3.servicio.OrdenCompraServicio;
+import com.carlos.sistemat3.servicio.DetalleCompraServicio;
 
 @RestController
 public class WebServiceController {
@@ -60,6 +74,33 @@ public class WebServiceController {
 	@Autowired
 	@Qualifier("plazoPagoServicio")
 	private PlazoPagoServicio plazoPagoServicio;
+	
+	
+	@Autowired
+	@Qualifier("empleadoServicio")
+	private EmpleadoServicio empleadoServicio;
+	
+	
+	@Autowired
+	@Qualifier("facturaServicio")
+	private FacturaServicio facturaServicio;
+		
+	@Autowired
+	@Qualifier("notaVentaServicio")
+	private NotaVentaServicio notaVentaServicio;
+	
+	@Autowired
+	@Qualifier("detalleVentaServicio")
+	private DetalleVentaServicio detalleVentaServicio;
+	
+	@Autowired
+	@Qualifier("ordenCompraServicio")
+	private OrdenCompraServicio ordenCompraServicio;
+	
+	@Autowired
+	@Qualifier("detalleCompraServicio")
+	private DetalleCompraServicio detalleCompraServicio;
+	
 	
 	/*Api Usuarios*/
 	
@@ -143,6 +184,32 @@ public class WebServiceController {
 		
 		return new Response<>(Response.STATUS_ERROR,"El usuario no existe");
 	}
+	
+	/*Api Empleados*/
+	/**
+	 * Obtener todos los empleados
+	 * @return listado de empleados
+	 * */
+	@GetMapping("/empleados")
+	public Response getEmpleados(@RequestParam(value="valorBusqueda",defaultValue="-1")String valorBusqueda,
+								 @RequestParam(value="filtro",defaultValue="-1")Integer filtro) {
+		
+		
+			//buscando filtrando
+			/*if(valorBusqueda!="-1" && filtro!=-1)
+				switch(filtro){
+					//buscar por nombre
+					case 2:
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findByNombre(valorBusqueda));					
+					default: //por id
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findById(Integer.parseInt(valorBusqueda)));
+
+				}*/
+			
+		//en otro caso, se obtiene la lists completa
+		return new Response<Empleado>(Response.STATUS_OK,empleadoServicio.all());
+	}
+	
 	
 	/*Api Clientes*/
 	/*
@@ -370,6 +437,254 @@ public class WebServiceController {
 	
 	
 	/*Api de facturas*/
+	/**
+	 * Obtener todas las facturas
+	 * @return listado de facturas
+	 * */
+	@GetMapping("/facturas")
+	public Response getFacturas(@RequestParam(value="valorBusqueda",defaultValue="-1")String valorBusqueda,
+								 @RequestParam(value="filtro",defaultValue="-1")Integer filtro) {
+		
+		
+			//buscando filtrando
+			/*if(valorBusqueda!="-1" && filtro!=-1)
+				switch(filtro){
+					//buscar por nombre
+					case 2:
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findByNombre(valorBusqueda));					
+					default: //por id
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findById(Integer.parseInt(valorBusqueda)));
+
+				}*/
+			
+		//en otro caso, se obtiene la lists completa
+		return new Response<Factura>(Response.STATUS_OK,facturaServicio.all());
+	}
+	
+	
+	/*
+	 * @return obtener el último índice generado
+	 * */
+	@GetMapping("/facturas/ultimo-indice")
+	public Response getLastFacturaCode() {
+		List<Integer> lastRowCodigo=new ArrayList<>();
+		lastRowCodigo.add(facturaServicio.getLastRowCodigo());
+		return new Response<Integer>(Response.STATUS_OK,lastRowCodigo);
+	}
+	
+	
+	/**
+	 * registrar factura
+	 * @param id de la factura
+	 * @param codigo de la factura
+	 * @param fechaEmision de la factura
+	 * @param fechaVencimiento de la factura
+	 * @param subTotal de la factura
+	 * @param descuento de la factura
+	 * @param igv de la factura
+	 * @param total de la factura
+	 * @param empleadoId de la factura
+	 * @param plazoPagoId de la factura
+	 * @param estadosTablasId de la factura
+	 * @param clientesId de la factura
+	 * @return status si el registro ha sido exitoso o no
+	 * */
+	@PostMapping("/facturas")
+	public Response addFactura(@RequestBody Factura factura) {
+		Factura facturaResultante=facturaServicio.add(factura);
+		List<Identificador> identificadores=new ArrayList<>();
+		identificadores.add(new Identificador(facturaResultante.getId()));
+		return new Response<Identificador>(Response.STATUS_OK,"La factura se ha agregado con éxito",identificadores);
+	}
+	
+	
+	/**
+	 * Obtener todos los detalle de factura de venta
+	 * @return listado de detalle de factura de venta
+	 * */
+	@GetMapping("/facturas/{facturaId}/detalle")
+	public Response getFacturaVentaDetalle(@PathVariable("facturaId")int facturaId) {				
+		return new Response<DetalleVenta>(Response.STATUS_OK,detalleVentaServicio.findByFacturaId(facturaId));
+	}
+	
+	/**
+	 * registrar detalle de factura
+	 * @param id de la factura
+	 *  
+	 * @param cantidad del detalle
+	 * @param precio del detalle 
+	 * @return status si el registro ha sido exitoso o no
+	 * 
+	 * */
+	//forzar a ser detalle para factura
+	@PostMapping("/facturas/{facturaId}/detalle")
+	public Response addFacturaDetalle(@PathVariable("facturaId")int facturaId,@RequestBody DetalleVenta detalleVenta) {
+		detalleVenta.setFacturaId(facturaId);
+		DetalleVenta detalleVentaResultante=detalleVentaServicio.add(detalleVenta);
+		List<Identificador> identificadores=new ArrayList<>();
+		identificadores.add(new Identificador(detalleVentaResultante.getId()));
+		return new Response<Identificador>(Response.STATUS_OK,"El detalle venta se ha agregado con en el nota venta éxito",identificadores);
+	}
+	
+	/*Api nota de venta*/
+	/**
+	 * Obtener todas las notas de venta
+	 * @return listado de notas de venta
+	 * */
+	@GetMapping("/notas-venta")
+	public Response getNotasVenta(@RequestParam(value="valorBusqueda",defaultValue="-1")String valorBusqueda,
+								 @RequestParam(value="filtro",defaultValue="-1")Integer filtro) {
+		
+		
+			//buscando filtrando
+			/*if(valorBusqueda!="-1" && filtro!=-1)
+				switch(filtro){
+					//buscar por nombre
+					case 2:
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findByNombre(valorBusqueda));					
+					default: //por id
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findById(Integer.parseInt(valorBusqueda)));
+
+				}*/
+			
+		//en otro caso, se obtiene la lists completa
+		return new Response<NotaVenta>(Response.STATUS_OK,notaVentaServicio.all());
+	}
+
+	/*
+	 * @return obtener el último índice generado
+	 * */
+	@GetMapping("/notas-venta/ultimo-indice")
+	public Response getLastNotaVentaIndex() {
+		List<Integer> lastRowCodigo=new ArrayList<>();
+		lastRowCodigo.add(notaVentaServicio.getLastRowIndex());
+		return new Response<Integer>(Response.STATUS_OK,lastRowCodigo);
+	}
+	
+	/**
+	 * registrar nota de venta
+	 * @param id de la notaVenta
+	 * @param codigo de la notaVenta
+	 * @param fechaEmision de la notaVenta
+	 * @param subTotal de la notaVenta
+	 * @param descuento de la notaVenta
+	 * @param igv de la notaVenta
+	 * @param total de la notaVenta
+	 * @param plazoPagoId de la notaVenta
+	 * @param clientesId de la notaVenta
+	 * @return status si el registro ha sido exitoso o no
+	 * */
+	@PostMapping("/notas-venta")
+	public Response addNotaVenta(@RequestBody NotaVenta notaVenta) {
+		NotaVenta notaVentaResultante=notaVentaServicio.add(notaVenta);
+		List<Identificador> identificadores=new ArrayList<>();
+		identificadores.add(new Identificador(notaVentaResultante.getId()));
+		return new Response<Identificador>(Response.STATUS_OK,"El proveedor se ha agregado con éxito",identificadores);
+	}
+
+	/**
+	 * Obtener todos los detalle de nota de venta
+	 * @return listado de detalle de nota de venta
+	 * */
+	@GetMapping("/notas-venta/{notaVentaId}/detalle")
+	public Response getNotaVentaDetalle(@PathVariable("notaId")int notaVentaId) {				
+		return new Response<DetalleVenta>(Response.STATUS_OK,detalleVentaServicio.findByNotaVentasId(notaVentaId));
+	}
+	
+	/**
+	 * registrar detalle de nota de venta
+	 * @param id de la notaVenta
+	 *  
+	 * @param cantidad del detalle
+	 * @param precio del detalle 
+	 * @return status si el registro ha sido exitoso o no
+	 * 
+	 * */
+	//forzar a ser detalle para nota de venta
+	@PostMapping("/notas-venta/{notaVentaId}/detalle")
+	public Response addNotaVentaDetalle(@PathVariable("notaId")int notaVentaId,@RequestBody DetalleVenta detalleVenta) {
+		detalleVenta.setNotaVentasId(notaVentaId);
+		DetalleVenta detalleVentaResultante=detalleVentaServicio.add(detalleVenta);
+		List<Identificador> identificadores=new ArrayList<>();
+		identificadores.add(new Identificador(detalleVentaResultante.getId()));
+		return new Response<Identificador>(Response.STATUS_OK,"El detalle venta se ha agregado con en el nota venta éxito",identificadores);
+	}	
+	
+	/*Api de orden de compra*/
+
+	/**
+	 * Obtener todas las ordenes de compra
+	 * @return listado de ordenes de compra
+	 * */
+	@GetMapping("/ordenes-compra")
+	public Response getOrdenesCompra(@RequestParam(value="valorBusqueda",defaultValue="-1")String valorBusqueda,
+								     @RequestParam(value="filtro",defaultValue="-1")Integer filtro) {			
+			//buscando filtrando
+			/*if(valorBusqueda!="-1" && filtro!=-1)
+				switch(filtro){
+					//buscar por nombre
+					case 2:
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findByNombre(valorBusqueda));					
+					default: //por id
+						return new Response<Producto>(Response.STATUS_OK,productoServicio.findById(Integer.parseInt(valorBusqueda)));
+
+				}*/
+			
+		//en otro caso, se obtiene la lists completa
+		return new Response<OrdenCompra>(Response.STATUS_OK,ordenCompraServicio.all());
+	}
+
+	
+
+	/**
+	 * registrar orden de compra
+	 * @param id de la ordenCompra
+	 * @param proveedorId de la ordenCompra
+	 * @param subTotal de la ordenCompra
+	 * @param igv de la ordenCompra
+	 * @param total de la ordenCompra
+	 * @param fecha de la ordenCompra	 
+	 * @return status si el registro ha sido exitoso o no
+	 * */
+	@PostMapping("/ordenes-compra")
+	public Response addOrdenCompra(@RequestBody OrdenCompra ordenCompra) {
+		OrdenCompra ordenCompraResultante=ordenCompraServicio.add(ordenCompra);
+		List<Identificador> identificadores=new ArrayList<>();
+		identificadores.add(new Identificador(ordenCompraResultante.getId()));
+		return new Response<Identificador>(Response.STATUS_OK,"La orden de compra se ha agregado con éxito",identificadores);
+	}
+	
+	/**
+	 * Obtener todos los detalle de ordenCompra de venta
+	 * @return listado de detalle de ordenCompra de venta
+	 * */
+	@GetMapping("/ordenes-compra/{ordenCompraId}/detalle")
+	public Response getOrdenCompraDetalle(@PathVariable("ordenCompraId")int ordenCompraId) {				
+		return new Response<DetalleCompra>(Response.STATUS_OK,detalleCompraServicio.findByOrdenCompraId(ordenCompraId));
+	}
+	
+	
+	/**
+	 * registrar detalle de orden de compra
+	 * @param id de la ordenCompra
+	 *  
+	 * @param cantidad del detalle
+	 * @param precio del detalle 
+	 * @return status si el registro ha sido exitoso o no
+	 * 
+	 * */
+	@PostMapping("/ordenes-compra/{ordenCompraId}/detalle")
+	public Response addOrdenCompraDetalle(@PathVariable("ordenCompraId")int ordenCompraId,@RequestBody DetalleCompra detalleCompra) {
+		detalleCompra.setOrdenCompraId(ordenCompraId);
+		DetalleCompra detalleCompraResultante=detalleCompraServicio.add(detalleCompra);
+		List<Identificador> identificadores=new ArrayList<>();
+		identificadores.add(new Identificador(detalleCompraResultante.getId()));
+		return new Response<Identificador>(Response.STATUS_OK,"El detalle compra se ha agregado con en el nota venta éxito",identificadores);
+	}
+
+	
+	
+	/*Api de detalle de venta*/
 	
 	/*Api de estados de pago*/
 	@GetMapping("/plazos-pago")
@@ -378,5 +693,11 @@ public class WebServiceController {
 	}
 	
 	/*obtener hora del sistema- pendiente*/
+	@GetMapping("/sistema/tiempo-actual")
+	public Response getCurrentTimeSystem() {
+		List<LocalDateTime> currentTime=new ArrayList<>();
+		currentTime.add(LocalDateTime.now());		
+		return new Response<LocalDateTime>(Response.STATUS_OK,currentTime);
+	}
 	
 }
