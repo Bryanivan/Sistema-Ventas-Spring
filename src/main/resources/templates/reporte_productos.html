@@ -88,7 +88,7 @@
     </div>
 
     <!--dependencias JS-->
-    <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
+    <div th:replace="fragments/footer_dependencies :: dependencies (pageType='system')"></div> 
     <div th:replace="fragments/mantener_producto :: mantener-producto"></div> 
 
     <!--obtener servicio de producto-->

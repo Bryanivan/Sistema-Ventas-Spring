@@ -11,9 +11,10 @@ import com.carlos.sistemat3.entidad.User;
 @Repository("userJpaRepository")
 public interface UserJpaRepository extends JpaRepository<User,Serializable>{
 	
-	@Query(value="SELECT count(*) FROM user WHERE usuariouser=?1 AND passworduser=?2",nativeQuery = true)
-	int exists(String username, String password);
+	@Query(value="SELECT count(*) FROM user WHERE usuariouser=?1",nativeQuery = true)
+	int exists(String username);
 	
 	List<User> findByAuthToken(String authToken);
+	List<User> findByUsername(String username);
 	
 }

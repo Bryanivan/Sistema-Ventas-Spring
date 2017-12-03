@@ -48,14 +48,16 @@ public class UsuarioServicio implements EntidadServicio<User>{
 	}
 
 	
-	public int exists(String username, String password) {		
-		return userJpaRepository.exists(username,password);
+	public int exists(String username) {		
+		return userJpaRepository.exists(username);
 	}
 
 	public List<User> findByAuthToken(String authToken){
 		return userJpaRepository.findByAuthToken(authToken);
 	}
 
-
+	public List<User> findByUsername(String username){
+		return userJpaRepository.findByUsername(username);
+	}
 
 }

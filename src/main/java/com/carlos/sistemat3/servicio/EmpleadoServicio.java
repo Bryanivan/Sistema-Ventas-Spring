@@ -55,4 +55,8 @@ public class EmpleadoServicio implements EntidadServicio<Empleado>{
 		return empleadoJpaRepository.save(empleado);
 	}
 	
+	public List<Empleado> findByUserId(int userId){
+		return this.empleadoJpaRepository.findByUserId(userId);
+	}
+	
 }

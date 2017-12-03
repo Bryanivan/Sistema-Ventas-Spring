@@ -10,7 +10,7 @@
 
         <div class="main-panel">
             <nav th:include="fragments/navbar :: navbar" class="navbar navbar-transparent navbar-absolute"></nav>
-            <div class="content">
+            <div class="content" id="user-profile">
                 <div class="container-fluid">
                     <div class="row">                        
                         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -20,7 +20,7 @@
                                 </div>
                                 <div class="card-content">
                                     <p class="category">Bienvenido</p>
-                                    <h3 class="title">Usuario</h3>
+                                    <h3 class="title">{{empleado.nombres}}</h3>
                                 </div>
                                 <div class="card-footer">                                    
                                 </div>
@@ -37,16 +37,10 @@
     </div>
 
     <!--dependencias JS-->    
-    <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
+    <div th:replace="fragments/footer_dependencies :: dependencies (pageType='system')"></div> 
 
     <script type="text/javascript">
-        $(document).ready(function() {
-
-            // Javascript method's body can be found in assets/js/demos.js
-            demo.initDashboardPageCharts();
-            let username=localStorage.getItem('user');
-            $('.card-content .title').text(username);
-        });
+        
 
     </script>
 

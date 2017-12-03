@@ -117,22 +117,26 @@ public class WebServiceController {
 	/*Api Usuarios*/
 	
 	/**
-	 * Obtener todos los usuarios
-	 * @return listado de usuarios
+	 * Obtener todos los usuario
+	 * @return listado de usuario
 	 * */
 	@GetMapping("/usuarios")
-	public Response getUsuarios() {		
-		return new Response<User>(Response.STATUS_OK, usuarioServicio.all());
+	public Response getUsuarios(@RequestParam(value="token",defaultValue="-1")String token) {		
+			if(token!="-1") {				
+				return new Response<User>(Response.STATUS_OK, usuarioServicio.findByAuthToken(token));
+			}
+		//return new Response<User>(Response.STATUS_OK, usuarioServicio.all());
+		return new Response<User>(Response.STATUS_ERROR, "Token incorrecto");
 	}
 	
 	/**
 	 * Obtener todos los usuarios
 	 * @return listado de usuarios
-	 * */
+	 * 
 	@GetMapping("/usuarios/{token}")
 	public Response getUsuarioByToken(@PathVariable("token")String token) {			
 		return new Response<User>(Response.STATUS_OK, usuarioServicio.findByAuthToken(token));
-	}
+	}*/
 	
 	/**
 	 * Ingresar un nuevo usuario
@@ -199,15 +203,19 @@ public class WebServiceController {
 	 * @param password del usuario 
 	 * @return token de la sección actual
 	 * */
-	@GetMapping("/auth")
-	public Response login(@RequestParam(value="username",defaultValue="-1")String username,
-		      			  @RequestParam(value="password",defaultValue="-1")String password) {
+	@PostMapping("/auth")
+	public Response login(@RequestParam(value="token",defaultValue="-1")String token,
+		      			  @RequestParam(value="username",defaultValue="-1")String username) {
 		
-		int exists=usuarioServicio.exists(username,password);
 		
-		if(exists!=0)//existe
-			return new Response<>(Response.STATUS_OK,"http://localhost:8080/web/dashboard");
 		
+		if(token!="-1") {
+			List<User> usuarios=usuarioServicio.findByUsername(username);
+			User current=usuarios.get(0);
+			current.setAuthToken(token);
+			usuarioServicio.update(current);
+			return new Response<>(Response.STATUS_OK,"Bienvenido!");
+		}
 		return new Response<>(Response.STATUS_ERROR,"El usuario no existe");
 	}
 	
@@ -227,23 +235,15 @@ public class WebServiceController {
 	 * @return listado de empleados
 	 * */
 	@GetMapping("/empleados")
-	public Response getEmpleados(@RequestParam(value="valorBusqueda",defaultValue="-1")String valorBusqueda,
-								 @RequestParam(value="filtro",defaultValue="-1")Integer filtro) {
+	public Response getEmpleados(@RequestParam(value="userId",defaultValue="-1")int userId) {
 		
 		
 			//buscando filtrando
-			/*if(valorBusqueda!="-1" && filtro!=-1)
-				switch(filtro){
-					//buscar por nombre
-					case 2:
-						return new Response<Producto>(Response.STATUS_OK,productoServicio.findByNombre(valorBusqueda));					
-					default: //por id
-						return new Response<Producto>(Response.STATUS_OK,productoServicio.findById(Integer.parseInt(valorBusqueda)));
-
-				}*/
+			if(userId!=-1)				
+				return new Response<Empleado>(Response.STATUS_OK,empleadoServicio.findByUserId(userId));
 			
 		//en otro caso, se obtiene la lists completa
-		return new Response<Empleado>(Response.STATUS_OK,empleadoServicio.all());
+		return new Response<Empleado>(Response.STATUS_ERROR,"id de usuario no ingresado");
 	}
 	
 	

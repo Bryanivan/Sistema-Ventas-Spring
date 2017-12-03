@@ -1,4 +1,4 @@
-  <div th:fragment="dependencies">
+  <div th:fragment="dependencies (pageType)">
        <!--   Core JS Files   -->
         <script src="../static/js/jquery-3.2.1.min.js" th:src="@{/js/jquery-3.2.1.min.js}" type="text/javascript"></script>
         <script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}" type="text/javascript"></script>
@@ -47,16 +47,124 @@
         
 
         <!-- firebase auth-->
-        <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
-        <script>
-          // Initialize Firebase
-          // TODO: Replace with your project's customized code snippet
-          var config = {
-            apiKey: "AIzaSyCd5dvzTJlx5DZ6udTTCAnZ6GsGkBQccNo",  
-            authDomain: "carlosspringsystem.firebaseapp.com",            
-          };
-          firebase.initializeApp(config);
-        </script>
+        
+        <!--script que determina la sesión-->
+        <div th:switch="${pageType}">
+          <!--cargar firebase para auth-->
+          <div th:case="'login'">
+              <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+              <script>
+                console.log('in login');
+                // Initialize Firebase
+                // TODO: Replace with your project's customized code snippet
+                var config = {
+                  apiKey: "AIzaSyCd5dvzTJlx5DZ6udTTCAnZ6GsGkBQccNo",  
+                  authDomain: "carlosspringsystem.firebaseapp.com",            
+                };
+                firebase.initializeApp(config);
+              </script>
+          </div>
+          <!--cargar el usuario completo-->
+          <div th:case="*">            
+            <script>      
+                var user={};     
+                var vueGenerator=function(id){
+                  var userMV = new Vue({
+                                              el: id,
+                                              data:{
+                                                  user,
+                                                  empleado:{
+                                                    "id":"1",
+                                                    "nombres":"Carlos Chávez",
+                                                    "dni":"",
+                                                    "sueldo":0.0,
+                                                    "telefono":"0",
+                                                    "tipoEmpleadosId":1,
+                                                    "tipoEmpleado":"",
+                                                    "userId":0,
+                                                    "estadoId":0,
+                                                    "fotoUrl":""
+                                                  }
+                                              },
+                                              beforeCreate:function(){
+                                                 $.ajax({
+                                                    url:'/empleados',
+                                                    method:'get',
+                                                    data:{
+                                                      userId:user.id
+                                                    },
+                                                    success:(resp)=>{        
+                                                        this.empleado=resp.data[0];
+                                                        $.ajax({
+                                                            url:'/roles',
+                                                            method:'get',
+                                                            success:(resp)=>{
+                                                                if(resp.error==0){
+                                                                  for(var i in resp.data){
+                                                                    if(this.empleado.tipoEmpleadosId==resp.data[i].id){
+                                                                      console.log(resp.data[i].descripcion);
+                                                                      console.log(resp.data[i]);
+                                                                      this.empleado.tipoEmpleado=resp.data[i].descripcion;
+                                                                        //seleccionar módulos disponibles
+                                                                        if(resp.data[i].modulos!='all'){
+                                                                           $('.module').css('display','none');
+                                                                           modulos=resp.data[i].modulos.split('-');
+                                                                           for(var ii in modulos) $('#module-'+modulos[ii]).css('display','initial');
+
+                                                                        }
+
+                                                                    }
+                                                                  }
+                                                                }
+                                                            }
+
+                                                        });
+                                                    }
+                                                  });   
+                                                  $('.label-floating').removeClass('is-empty');
+                                              },
+                                              methods:{
+
+                                              }
+                                              
+                                          });
+                }
+
+                
+                token=localStorage.getItem('cyg.token'); //obtener token guardado
+                $.ajax({
+                    url:'/usuarios',
+                    data:{
+                      token
+                    },
+                    method:'get',
+                    success:function(resp){
+                        //usuario obtenido con éxito
+                        if(resp.error==0 && resp.data.length>0){
+                            user=resp.data[0];
+                           
+                                if(resp.error==0){
+                                    empleado=resp.data[0];
+                                          //crear objeto vue
+                                          vueGenerator('#user-data');
+                                          vueGenerator('#user-profile');
+                                }
+
+                                          
+                        }
+                        //en otro caso redireccionar al login
+                        else window.location.href="./login";
+                    }
+                });
+                
+
+    
+                
+                
+            </script>          
+          </div>
+        </div>
+        
     </div> 
     
     

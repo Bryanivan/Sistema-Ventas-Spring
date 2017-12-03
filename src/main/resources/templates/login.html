@@ -39,7 +39,7 @@
     
 
     <!--dependencias JS-->
-    <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
+    <div th:replace="fragments/footer_dependencies :: dependencies (pageType='login')"></div> 
     
     <!-- firebase auth-->
         <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
@@ -64,14 +64,22 @@
               var token = result.credential.accessToken;
               //profile
               var user = result.user;
+              var {email}=user;
               console.log(user);
               console.log(token);
               console.log(user);
               $.ajax({
                 url:'/auth',
-                method:'get',
-                success:()=>{
-                    
+                method:'post',
+                data:{
+                    token,
+                    username:email
+                },
+                success:(resp)=>{
+                    if(resp.error==0){
+                        localStorage.setItem('cyg.token',token);
+                        window.location.href='./dashboard';
+                    }
                 }
               })
             }).catch(function(error) {
