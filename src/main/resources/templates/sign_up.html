@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+
+<!--tÃ­tulo de web, metas, dependencias CSS/JS-->
+<head th:include="fragments/header :: header (pageName='Login')">
+</head>
+
+<body>
+    <div class="main-panel"  style="float: unset;width: 100%;background-image:  /*url(../static/img/sidebar-1.jpg)*/ ;background-size: cover;background-repeat: no-repeat;">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">                    
+                    <div class="col-md-offset-4 col-md-4 col-xs-12" >
+                        <div id="sign-up" class="card card-profile">
+                            <div class="card-avatar">
+                                <a href="#pablo">
+                                    <img class="img" src="../static/img/user.png"  th:src="@{/img/user.png}"/>
+                                </a>
+                            </div>
+                            <div class="content">                                
+                                <h4 class="card-title">Sign Up</h4>
+                                <p class="card-content">                                
+                                  <select id="cmb-roles" class="form-control" v-model="rolId">
+                                              <option v-for="rol in roles"  v-bind:value="rol.id">{{rol.descripcion}}</option>          
+                                  </select>
+                                  <br>
+
+                                <button id="btn-signup" class="btn btn-primary btn-round" @click="signUp">
+                                    Registrate con &nbsp;
+                                    <img th:src="@{/img/google.svg}" width="40" style="width: 40px;" />
+                                </button>
+                                <br>
+
+                                </p>
+                                <!--<a href="dashboard.html" class="btn btn-primary btn-round">Ingresar</a>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--footer-->
+        <footer class="footer" th:replace="fragments/footer :: footer"></footer> 
+        
+    </div>  
+    
+
+    <!--dependencias JS-->
+    <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
+    
+
+    <!--script para el login-->        
+    <script>
+       
+        var vm = new Vue({
+            el: "#sign-up",
+            data:{
+                rolId:1,
+                roles:[]
+            },
+            beforeCreate: function(){
+                $.ajax({
+                    url:'/roles',
+                    method:'get',
+                    success:(resp)=>{
+                        console.log(resp.data);
+                        this.roles=resp.data;
+                    }
+                });
+            },
+            watch:{
+                'rolId':function(val){
+                    console.log(val);
+                }
+            },
+            methods:{
+                signUp:function (){
+                    //auth
+
+                    var provider = new firebase.auth.GoogleAuthProvider();
+                    provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+                    provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+
+                    firebase.auth().signInWithPopup(provider).then((result)=> {
+                      modal("Sistema CYG","Registrando al usuario...");
+                      //token
+                      var token = result.credential.accessToken;
+                      //profile
+                      var user = result.user;
+                      console.log(user);
+                      console.log(token);
+                      console.log(user);
+                      //registrar usuario
+                      let {email,displayName,photoURL,refreshToken}=user;
+                      let rolId=this.rolId;
+
+                      //registrar mi usuario y empleado
+                      $.ajax({
+                        url:'/usuarios',
+                        method:'post',
+                        data:{
+                            email,displayName,photoURL,rolId,token,refreshToken
+                        },
+                        success:(resp)=>{
+                            modal('Sistema CYG',resp.message);
+                            //si se registró correctamente, redirigirme al dashboard
+                            if(resp.error==0) {
+                                localStorage.setItem('cyg.token',token);
+                                window.location.href='./dashboard';
+                            }
+                        }
+                      });
+                    }).catch(function(error) {
+                      var errorCode = error.code;
+                      modal("Sistema CYG",error.message);
+                    });
+                }
+            },                
+        });
+
+    </script>
+
+</body>
+</html>

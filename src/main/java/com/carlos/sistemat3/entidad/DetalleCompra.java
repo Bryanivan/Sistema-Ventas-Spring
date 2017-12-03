@@ -5,8 +5,11 @@ package com.carlos.sistemat3.entidad;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -31,7 +34,9 @@ public class DetalleCompra {
 	private int cantidad;
 	
 	@Column(name="preciocompradeoc")
-	private float precio;
+	private float precioCompra;
+	
+		
 	
 	
 	/**
@@ -40,6 +45,23 @@ public class DetalleCompra {
 	public DetalleCompra() {
 		super();
 	}
+
+	
+
+	/**
+	 * @param productoId
+	 * @param ordenCompraId
+	 * @param cantidad
+	 * @param precio
+	 */
+	public DetalleCompra(int productoId, int ordenCompraId, int cantidad, float precio) {
+		super();
+		this.productoId = productoId;
+		this.ordenCompraId = ordenCompraId;
+		this.cantidad = cantidad;
+		this.precioCompra = precio;
+	}
+
 
 
 	/**
@@ -55,7 +77,26 @@ public class DetalleCompra {
 		this.productoId = productoId;
 		this.ordenCompraId = ordenCompraId;
 		this.cantidad = cantidad;
-		this.precio = precio;
+		this.precioCompra = precio;
+	}
+
+	
+
+	/**
+	 * @param id
+	 * @param productoId
+	 * @param ordenCompraId
+	 * @param cantidad
+	 * @param precio
+	 * @param producto
+	 */
+	public DetalleCompra(int id, int productoId, int ordenCompraId, int cantidad, float precio, Producto producto) {
+		super();
+		this.id = id;
+		this.productoId = productoId;
+		this.ordenCompraId = ordenCompraId;
+		this.cantidad = cantidad;
+		this.precioCompra = precio;
 	}
 
 
@@ -126,17 +167,18 @@ public class DetalleCompra {
 	/**
 	 * @return the precio
 	 */
-	public float getPrecio() {
-		return precio;
+	public float getPrecioCompra() {
+		return precioCompra;
 	}
 
 
 	/**
 	 * @param precio the precio to set
 	 */
-	public void setPrecio(float precio) {
-		this.precio = precio;
+	public void setPrecioCompra(float precio) {
+		this.precioCompra = precio;
 	}
+
 	
 	
 }

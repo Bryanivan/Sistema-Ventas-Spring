@@ -20,7 +20,16 @@ public class User {
 	
 	@Column(name="passworduser")
 	private String password;
-
+	
+	@Column(name="auth_token")
+	private String authToken;
+	
+	@Column(name="remember_token")
+	private String rememberToken;
+		
+	@Column(name="roles_idroles")
+	private int rolId;
+	
 	/**
 	 * 
 	 */
@@ -39,6 +48,21 @@ public class User {
 		this.id = id;
 		this.username = username;
 		this.password = password;
+	}
+	
+	
+
+	/**
+	 * @param username
+	 * @param authToken
+	 * @param rememberToken
+	 */
+	public User(String username, int rolId,String authToken, String rememberToken) {
+		super();
+		this.username = username;
+		this.rolId=rolId;
+		this.authToken = authToken;
+		this.rememberToken = rememberToken;
 	}
 
 	public int getId() {
@@ -65,4 +89,48 @@ public class User {
 		this.password = password;
 	}
 
+	/**
+	 * @return the authToken
+	 */
+	public String getAuthToken() {
+		return authToken;
+	}
+
+	/**
+	 * @param authToken the authToken to set
+	 */
+	public void setAuthToken(String authToken) {
+		this.authToken = authToken;
+	}
+
+	/**
+	 * @return the rememberToken
+	 */
+	public String getRememberToken() {
+		return rememberToken;
+	}
+
+	/**
+	 * @param rememberToken the rememberToken to set
+	 */
+	public void setRememberToken(String rememberToken) {
+		this.rememberToken = rememberToken;
+	}
+
+	/**
+	 * @return the rolId
+	 */
+	public int getRolId() {
+		return rolId;
+	}
+
+	/**
+	 * @param rolId the rolId to set
+	 */
+	public void setRolId(int rolId) {
+		this.rolId = rolId;
+	}
+	
+	
+	
 }

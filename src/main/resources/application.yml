@@ -14,5 +14,5 @@ spring:
 
   thymeleaf:
     mode: LEGACYHTML5
-
+    cache: false
     

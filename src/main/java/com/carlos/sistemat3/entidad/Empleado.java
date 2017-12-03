@@ -39,15 +39,16 @@ public class Empleado {
 	
 	@Column(name="tipoempleados_idtipe")
 	private int tipoEmpleadosId;
+		
+	@Column(name="user_iduser")
+	private int userId;
 	
-	@ManyToOne
-	@JoinColumn(name="user_iduser")
-	private User user;
 	
 	@Column(name="estadostablas_idestadostabla")
 	private int estadoId;
 
-	
+	@Column(name="fotourl")
+	private String fotoUrl;
 	
 	/**
 	 * 
@@ -71,7 +72,7 @@ public class Empleado {
 	 * @param estadoId
 	 */
 	public Empleado(String id, String nombres, String apellidoPaterno, String apellidoMaterno, String dni, float sueldo,
-			String telefono, int tipoEmpleadosId, User user, int estadoId) {
+			String telefono, int tipoEmpleadosId, int user, int estadoId) {
 		super();
 		this.id = id;
 		this.nombres = nombres;
@@ -81,8 +82,41 @@ public class Empleado {
 		this.sueldo = sueldo;
 		this.telefono = telefono;
 		this.tipoEmpleadosId = tipoEmpleadosId;
-		this.user = user;
+		this.userId = user;
 		this.estadoId = estadoId;
+	}
+
+	
+
+	/**
+	 * @param nombres
+	 * @param fotoUrl
+	 */
+	public Empleado(String nombres, String fotoUrl) {
+		super();
+		this.nombres = nombres;
+		this.fotoUrl = fotoUrl;
+	}
+
+	
+
+	
+
+
+	/**
+	 * @param nombres
+	 * @param tipoEmpleadosId
+	 * @param user
+	 * @param estadoId
+	 * @param fotoUrl
+	 */
+	public Empleado(String nombres,String fotoUrl, int tipoEmpleadosId,int user) {
+		super();
+		this.nombres = nombres; //nombres completoss
+		this.tipoEmpleadosId = tipoEmpleadosId; //tipo de empleado
+		this.userId = user; //id usuario
+		this.estadoId=8; //estado habilitado
+		this.fotoUrl = fotoUrl; //url foto usuario
 	}
 
 
@@ -232,19 +266,19 @@ public class Empleado {
 
 
 	/**
-	 * @return the user
+	 * @return the userId
 	 */
-	public User getUser() {
-		return user;
+	public int getUserId() {
+		return userId;
 	}
 
 
 
 	/**
-	 * @param user the user to set
+	 * @param userId the userId to set
 	 */
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 
 
@@ -263,6 +297,24 @@ public class Empleado {
 	 */
 	public void setEstadoId(int estadoId) {
 		this.estadoId = estadoId;
+	}
+
+
+
+	/**
+	 * @return the fotoUrl
+	 */
+	public String getFotoUrl() {
+		return fotoUrl;
+	}
+
+
+
+	/**
+	 * @param fotoUrl the fotoUrl to set
+	 */
+	public void setFotoUrl(String fotoUrl) {
+		this.fotoUrl = fotoUrl;
 	}
 	
 	

@@ -1,0 +1,210 @@
+<!--Ver proveedor-->
+<div th:fragment="ver-orden-compra">
+
+  <div id="ver-orden-compra" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog  modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Ver orden de compra</h4>
+        </div>
+        <div class="modal-body">                        
+                <div  id="ordenCompra" class="card-content table-responsive">
+                    <form>
+
+                        <!--formulario de proveedor-->
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-6">
+                                      <div class="form-group">
+                                          <label class="control-label">Código N°</label>
+                                          <input type="text" class="form-control" disabled v-model="ordenCompra.id"/>
+                                      </div>
+                                </div>
+                                <div class="col-md-6">
+                                      <div class="form-group">
+                                          <label class="control-label">Fecha</label>
+                                          <input type="text" class="form-control" disabled v-model="ordenCompra.fecha"/>
+                                      </div>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <h5 class="text-primary">Datos de Proveedor</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                      <div class="form-group">
+                                          <label class="control-label">Nombre</label>
+                                          <input type="text" class="form-control" disabled v-model="ordenCompra.proveedor.razonSocial"/>
+                                      </div>
+                                </div>
+                            </div>
+                            <div class="row">                                                
+                                <div class="col-md-6 col-sm-12">
+                                      <div class="form-group">
+                                          <label class="control-label">Ruc</label>
+                                          <textarea  v-model="ordenCompra.proveedor.ruc" class="form-control" disabled></textarea>
+                                      </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                      <div class="form-group">
+                                          <label class="control-label">Telefono</label>
+                                          <input type="text" class="form-control" disabled v-model="ordenCompra.proveedor.telefono"/>
+                                      </div>
+                                </div>
+                                <div class="col-md-6">
+                                      <div class="form-group">
+                                          <label class="control-label">Email</label>
+                                          <input type="text" class="form-control" disabled v-model="ordenCompra.proveedor.email"/>
+                                      </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        
+
+                        <!--formulario de producto-->
+                        <fieldset>
+                            <h5 class="text-primary">Detalle compra</h5>                                          
+
+                            <!-- Listado de productos - detalle de orden compras -->
+                            <table class="table lista">
+                                <thead class="text-primary">
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Cantidad</th>
+                                    <th>Prec. Compra</th>
+                                    <th>SubTotal</th> 
+                                </thead>
+                                <tbody>      
+                                    
+
+                                    <!--si no hay productos mostrar-->
+                                    <tr v-if="productos.length==0"><td colspan="6" textAlign="center">Lista Vacía</td></tr>
+
+                                    <!--en otro caso, mostrar todos los productos-->
+                                    <tr v-for="(producto,index) in productos">
+                                        <td>{{producto.id}}</td>
+                                        <td class="text-primary">{{producto.id}}</td>
+                                        <td class="text-primary">{{producto.cantidad}}</td>
+                                        <td>S/.{{producto.precioCompra}}</td>
+                                        <td class="text-primary">S/. {{producto.precioCompra*producto.cantidad | currency}}</td>
+                                     </tr>
+                                </tbody>
+                            </table>
+                        </fieldset>
+
+
+                        <div class="row flex-column">
+                                <div class="col-md-3 flex-item-right">
+                                
+                                        <div class="form-group">
+                                            <label class="control-label">SubTotal
+                                              <input type="text" class="form-control"  disabled="" v-model="ordenCompra.subTotal"/>
+                                            </label>
+                                        </div>
+                                
+                                
+                                        <div class="form-group">
+                                            <label class="control-label">IGV
+                                              <input type="text" class="form-control"  disabled="" v-model="ordenCompra.igv"/>
+                                            </label>
+                                        </div>
+
+                                
+                                        <div class="form-group">
+                                            <label class="control-label">Total
+                                              <input type="text" class="form-control"  disabled="" v-model="ordenCompra.total" />
+                                            </label>
+                                        </div>                                        
+                                </div>
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+                                
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Descargar en PDF <i class="material-icons">get_app</i></button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  
+<!--obtener servicio de proveedor-->
+<script th:src="@{/app/ordenCompraService.js}"></script>
+<script th:src="@{/app/productoService.js}"></script>
+<script th:src="@{/app/detalleCompraService.js}"></script>
+
+<script type="text/javascript">
+                 //{"id":1,"productoId":0,"ordenCompraId":1,"cantidad":2,"precioCompra":0.0}
+                 //VUE FILTROS
+                  Vue.filter('currency', function (value) {
+                      return parseFloat(value).toFixed(2);
+                  });
+                    //modelo
+                    let data={
+                        ordenCompra:{ 
+                          id:0,
+                          proveedorId:1,
+                          proveedor:{
+                            ruc:'',
+                            razonSocial:'',
+                            telefono:'',
+                            email:'',
+                            estadoId:0,
+                            estado:'0',
+                          },
+                          subTotal:0.0,
+                          igv:0.0,
+                          total:0.0,
+                          fecha:'2017-11-30',
+                        },
+                        productos:[],                        
+                    };
+
+
+                    //vista-modelo
+                    var verOrdenCompra = new Vue({
+                        el: "#ver-orden-compra",
+                        data,
+                        beforeCreate: function(){                            
+
+                        }, //métodos
+                        methods:{ 
+                            //único que debe ser llamado fuera del ámbito
+                            show:function(ordenCompra){
+                              this.ordenCompra=ordenCompra;
+                              this.ordenCompra.proveedor={
+                                ruc:'',
+                                razonSocial:'',
+                                telefono:'',
+                                email:'',
+                                estadoId:0,
+                                estado:'0',
+                              };
+                              this.productos=[];
+                              $('#ver-orden-compra .label-floating').removeClass('is-empty');
+                              $('#ver-orden-compra').modal('show');
+
+                              DetalleCompraService.get(ordenCompra.id)
+                                                   .then((productos)=>{
+                                                     this.productos=productos;
+                                                   });
+                            },
+                            //ocultar
+                            close:function(){
+                              $('#ver-orden-compra').modal('hide');
+                            }
+                        }
+                    });
+        
+    </script>
+
+</div>

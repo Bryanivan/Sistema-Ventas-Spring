@@ -19,27 +19,11 @@
                             </div>
                             <div class="content">                                
                                 <h4 class="card-title">Login</h4>
-                                <p class="card-content">
-                                  <form id="login-form">
-                                        <div class="row">
-                                            <div class="col-md-10 col-md-offset-1">
-                                                <div class="form-group label-floating" style="text-align: center;">    
-                                                    <input type="text" class="form-control" id="txtUsername" placeholder="Username" required="">
-                                                </div>
-                                            </div>                                        
-                                        </div>
-
-                                        <div class="row">                                       
-                                            <div class="col-md-10 col-md-offset-1">
-                                                <div class="form-group label-floating">
-                                                    <input type="password" class="form-control" id="txtPassword" placeholder="password" required="">
-                                                </div>
-                                            </div>                                        
-                                        </div>
-
-                                        <input type="submit" id="btn-login" class="btn btn-primary btn-round" name="Ingresar" />
-                                    </form>
-  
+                                <p class="card-content">                                
+                                    <button id="btn-login" class="btn btn-primary btn-round">
+                                        Ingresar con &nbsp;
+                                        <img th:src="@{/img/google.svg}" width="40" style="width: 40px;" />
+                                    </button>
                                 </p>
                                 <!--<a href="dashboard.html" class="btn btn-primary btn-round">Ingresar</a>-->
                             </div>
@@ -57,43 +41,46 @@
     <!--dependencias JS-->
     <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
     
-    <!--script para el login-->    
+    <!-- firebase auth-->
+        <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+
+    <!--script para el login-->        
     <script>
-    	$('#login-form').on('submit',(evt)=>{
-    		//no cargue el evento submit por defecto
-    		evt.preventDefault();
-    		
-    		//obteniendo el usuario y contraseña
-    		var password=$('#txtPassword').val(),
-    			username=$('#txtUsername').val();
-    		
-    		
-    		var settings = {    				  
-    				  "url": "/auth",
-    				  "method": "GET",
-    				  //pasando los datos al api
-    				  "data":{	
-    					  username,
-    					  password
-    				  },
-    				  //obteniendo respuesta del servidor
-    				  success: (res)=>{
-    					  if(res.error==0){//login correcto
-                            localStorage.setItem('user',username);
-    					  	window.location.href=res.message; //redireccionando al link
-    					  }else{ //login es incorrecto
-    						//mostrar el mensaje de error
-    						  modal("Error",res.message);  
-    					  } 
+        // Initialize Firebase        
+        var config = {
+            apiKey: "AIzaSyCd5dvzTJlx5DZ6udTTCAnZ6GsGkBQccNo",  
+            authDomain: "carlosspringsystem.firebaseapp.com",            
+        };
+        firebase.initializeApp(config);
+        //auth
+        $('#btn-login').on('click',()=>{            
+            var provider = new firebase.auth.GoogleAuthProvider();
+            provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+            provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
 
-    				  }
-    				};
+            firebase.auth().signInWithPopup(provider).then(function(result) {
+              modal("Sistema CYG","Verificando coincidencia de datos");
+              //token
+              var token = result.credential.accessToken;
+              //profile
+              var user = result.user;
+              console.log(user);
+              console.log(token);
+              console.log(user);
+              $.ajax({
+                url:'/auth',
+                method:'get',
+                success:()=>{
+                    
+                }
+              })
+            }).catch(function(error) {
+              var errorCode = error.code;
+              modal("Sistema CYG",error.message);
+            });
+        });
 
-			$.ajax(settings).done(function (response) {
- 				  console.log(response);
- 			});
-    		
-    	});  
+
     </script>
 
 </body>

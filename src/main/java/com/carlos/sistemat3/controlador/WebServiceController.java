@@ -3,7 +3,9 @@ package com.carlos.sistemat3.controlador;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +23,7 @@ import com.carlos.sistemat3.modelo.Response;
 import com.carlos.sistemat3.modelo.Identificador;
 import com.carlos.sistemat3.entidad.User;
 import com.carlos.sistemat3.entidad.Producto;
+import com.carlos.sistemat3.configuracion.PdfGenaratorUtil;
 import com.carlos.sistemat3.entidad.Cliente;
 import com.carlos.sistemat3.entidad.Proveedor;
 import com.carlos.sistemat3.entidad.EstadoTabla;
@@ -31,7 +34,9 @@ import com.carlos.sistemat3.entidad.NotaVenta;
 import com.carlos.sistemat3.entidad.DetalleVenta;
 import com.carlos.sistemat3.entidad.OrdenCompra;
 import com.carlos.sistemat3.entidad.DetalleCompra;
+import com.carlos.sistemat3.entidad.Rol;
 import com.carlos.sistemat3.servicio.UsuarioServicio;
+import com.carlos.sistemat3.servicio.RolServicio;
 import com.carlos.sistemat3.servicio.ClienteServicio;
 import com.carlos.sistemat3.servicio.ProductoServicio;
 import com.carlos.sistemat3.servicio.ProveedorServicio;
@@ -48,10 +53,17 @@ import com.carlos.sistemat3.servicio.DetalleCompraServicio;
 public class WebServiceController {
 	private final Log LOG= LogFactory.getLog(WebServiceController.class); 
 	
+	@Autowired
+	PdfGenaratorUtil pdfGenaratorUtil;
+	
 	//servicios
 	@Autowired
 	@Qualifier("usuarioServicio")
 	private UsuarioServicio usuarioServicio;
+	
+	@Autowired
+	@Qualifier("rolServicio")
+	private RolServicio rolServicio;
 	
 	@Autowired
 	@Qualifier("productoServicio")
@@ -113,16 +125,30 @@ public class WebServiceController {
 		return new Response<User>(Response.STATUS_OK, usuarioServicio.all());
 	}
 	
+	/**
+	 * Obtener todos los usuarios
+	 * @return listado de usuarios
+	 * */
+	@GetMapping("/usuarios/{token}")
+	public Response getUsuarioByToken(@PathVariable("token")String token) {			
+		return new Response<User>(Response.STATUS_OK, usuarioServicio.findByAuthToken(token));
+	}
 	
 	/**
 	 * Ingresar un nuevo usuario
 	 * @return status si ha sido exitoso o no
 	 * */
 	@PostMapping("/usuarios")
-	public Response addUsuario(@RequestParam(value="username",defaultValue="-1")String username,
-							   @RequestParam(value="password",defaultValue="-1")String password) {
-		if(username!="-1" && password!="-1") {
-			usuarioServicio.add(new User(username,password));			
+	public Response addUsuario(@RequestParam(value="email",defaultValue="-1")String email,
+							   @RequestParam(value="displayName",defaultValue="-1")String displayName,
+							   @RequestParam(value="photoURL",defaultValue="-1")String photoURL,
+							   @RequestParam(value="rolId",defaultValue="-1")int rolId,
+							   @RequestParam(value="token",defaultValue="-1")String token,
+							   @RequestParam(value="refreshToken",defaultValue="-1")String refreshToken) {
+		if(email!="-1" && token!="-1") {
+			//reciviendo el usuario recién insertado
+			User usuarioAgregado=usuarioServicio.add(new User(email,rolId,token,refreshToken));
+			empleadoServicio.add(new Empleado(displayName,photoURL,rolId,usuarioAgregado.getId()));
 			return new Response<>(Response.STATUS_OK,"El usuario ha sido registrado con éxito");
 		}
 		
@@ -183,6 +209,16 @@ public class WebServiceController {
 			return new Response<>(Response.STATUS_OK,"http://localhost:8080/web/dashboard");
 		
 		return new Response<>(Response.STATUS_ERROR,"El usuario no existe");
+	}
+	
+	/*Api Roles*/
+	/**
+	 * Obtener todos los roles
+	 * @return listado de roles
+	 * */
+	@GetMapping("/roles")
+	public Response getRoles() {		
+		return new Response<Rol>(Response.STATUS_OK, rolServicio.all());
 	}
 	
 	/*Api Empleados*/
@@ -700,4 +736,10 @@ public class WebServiceController {
 		return new Response<LocalDateTime>(Response.STATUS_OK,currentTime);
 	}
 	
+	@GetMapping("/download/pdf")
+	void generarPdf() throws Exception{
+		Map<String,String> data = new HashMap<>();
+	    data.put("name","Carlos");
+	    pdfGenaratorUtil.createPdf("pdf_reporte_ventas",data); 
+	}
 }

@@ -52,7 +52,9 @@ public class UsuarioServicio implements EntidadServicio<User>{
 		return userJpaRepository.exists(username,password);
 	}
 
-	
+	public List<User> findByAuthToken(String authToken){
+		return userJpaRepository.findByAuthToken(authToken);
+	}
 
 
 

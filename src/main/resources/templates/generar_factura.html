@@ -281,7 +281,7 @@
                         ventaId:0,
                         notaVentaId:1,//valor por defecto
                         factura:{ 
-                          codigo:'001-1', //valor por defecto
+                          codigo:'0001-000001', //valor por defecto
                           fechaEmision:'2017-11-30',
                           fechaVencimiento: '2017-11-30',
                           subTotal:0.0,
@@ -348,7 +348,9 @@
                             //obtener el último código de factura y nota de venta para generar un preview del siguiente
                              FacturaService.getLastRowIndex()
                                            .then((index)=>{
-                                              this.factura.codigo='001-'+(index+1);
+                                              indiceTexto=(index+1)+"";
+                                              prefix='00000';//prefijo
+                                              this.factura.codigo='0001-'+(prefix.substr(0,6-indiceTexto.length)+indiceTexto);
                                            });
 
                              NotaVentaService.getLastRowIndex()

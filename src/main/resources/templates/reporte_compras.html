@@ -60,10 +60,12 @@
                                             <th>Acciones</th>
                                         </thead>
                                         <tbody>      
+                                             <!--si no hay productos mostrar-->
+                                            <tr v-if="ordenCompras.length==0"><td colspan="6" textAlign="center">Lista Vacía</td></tr>
                                             <!--vista-->                                   
                                             <tr v-for="ordenCompra in ordenCompras">
                                                 <td>N°{{ordenCompra.id}}</td>
-                                                <td>{{ordenCompra.proveedorId}}</td>            
+                                                <td>{{ordenCompra.proveedor.razonSocial}}</td>            
                                                 <td>{{ordenCompra.fecha}}</td>
                                                 <td class="text-primary">S/. {{ordenCompra.total}}</td>
                                                 <td>
@@ -87,10 +89,12 @@
 
     <!--dependencias JS-->
     <div th:replace="fragments/footer_dependencies :: dependencies"></div> 
+
+    <div th:replace="fragments/ver_orden_compra :: ver-orden-compra"></div>
     <!--<div th:replace="fragments/mantener_ordenCompra :: mantener-ordenCompra"></div> -->
 
-    <!--obtener servicio de ordenCompra-->
-    <script th:src="@{/app/ordenCompraService.js}"></script>
+    <!--obtener servicio de ordenCompra - ya importada en ver orden compra-->
+    <script th:src="@{/app/proveedorService.js}"></script>
 
     <script type="text/javascript">        
         $(document).ready(function() {
@@ -122,8 +126,18 @@
                         beforeCreate: function(){
                             OrdenCompraService.get()
                                            .then((ordenCompras)=>{
-                                                console.log(ordenCompras);
-                                                this.ordenCompras=ordenCompras;
+                                                console.log(ordenCompras);                          
+                                                ProveedorService.get()
+                                                                .then((proveedores)=>{
+                                                                        console.log(proveedores);
+                                                                        this.ordenCompras=ordenCompras;     
+                                                                        for(var i in this.ordenCompras)
+                                                                            for(var ii in proveedores)
+                                                                                if(this.ordenCompras[i].proveedorId==proveedores[ii].id){    
+                                                                                    this.ordenCompras[i].proveedor=proveedores[ii];
+                                                                                }
+
+                                                                });
                                             });
 
                         }, //métodos
@@ -153,7 +167,7 @@
 
                             },
                             verOrdenCompra:function(ordenCompra){
-                                modal('chuma','chuma');
+                                verOrdenCompra.show(ordenCompra);
                             }
                         }
                     });

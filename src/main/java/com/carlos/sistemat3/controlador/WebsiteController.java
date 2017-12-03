@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WebsiteController {
 	private final String HOME_VIEW="dashboard",
 						 LOGIN_VIEW="login",
+						 SIGN_UP_VIEW="sign_up",
 						 REPORTE_PRODUCTOS_VIEW="reporte_productos",
 						 REGISTRO_CLIENTES_VIEW="registro_clientes",
 						 REGISTRO_PROVEEDORES_VIEW="registro_proveedores",
@@ -29,6 +30,11 @@ public class WebsiteController {
 	@GetMapping("/login")
 	public String login() {
 		return LOGIN_VIEW;
+	}
+
+	@GetMapping("/sign_up")
+	public String signUp() {
+		return SIGN_UP_VIEW;
 	}
 	
 	@GetMapping("/reporte_productos")

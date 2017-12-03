@@ -5,8 +5,11 @@ package com.carlos.sistemat3.entidad;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -37,7 +40,6 @@ public class OrdenCompra {
 	private String fecha;
 
 	
-	
 	/**
 	 * 
 	 */
@@ -45,7 +47,7 @@ public class OrdenCompra {
 		super();
 	}
 
-
+	
 
 	/**
 	 * @param id
@@ -82,6 +84,7 @@ public class OrdenCompra {
 		this.total = total;
 		this.fecha = fecha;
 	}
+
 
 
 
@@ -190,7 +193,6 @@ public class OrdenCompra {
 	public void setFecha(String fecha) {
 		this.fecha = fecha;
 	}
-	
 	
 	
 }
