@@ -29,25 +29,7 @@
                                            title="Generar factura">
                                               <i class="material-icons">note_add</i>
                                         </a>
-                                        <!--búsqueda-->
-                                        <div class="navbar-form navbar-right" role="search">
-    			                            <!--texto a buscar-->
-                                            <div class="form-group  is-empty">
-    			                                <input type="text" class="form-control" placeholder="Buscar" v-model="busqueda.valor">
-    			                                <span class="material-input"></span>
-    			                            </div>
-                                            <!--filtro-->
-                                            <div class="form-group label-floating">       
-                                              <select id="cmb-filtros" class="form-control" v-model="busqueda.filtroSeleccionadoId">
-                                                  <option v-for="filtro in busqueda.filtros"  v-bind:value="filtro.id">{{filtro.nombre}}</option>
-                                              </select>
-                                            </div>
-                                            <!--botón-->
-    			                            <button @click="buscarVenta" class="btn btn-white btn-round btn-just-icon">
-    			                                <i class="material-icons">search</i>
-    			                                <div class="ripple-container"></div>
-    			                            </button>
-    			                        </div>
+                                        
                                     </div>
                                     <!--lista de ventas en tabla-->
                                     <table class="table lista">
@@ -69,7 +51,7 @@
                                                 <td>{{venta.fechaEmision}}</td>                 
                                                 <td>
                                                     <a @click="verVenta(venta)" href="#ver-ordenCompra"><i class="material-icons">visibility</i></a>
-                                                    <button @click="anularFactura(venta)" v-if="venta.codigo!=undefined" class="btn btn-default">Anular</button>
+                                                    <button @click="anularFactura(venta)" v-if="venta.codigo!=undefined && venta.anulado==false" class="btn btn-default">Anular</button>
                                                     
                                                 </td>
                                              </tr>
@@ -94,6 +76,7 @@
                                         <thead class="text-primary">
                                             <th>Código</th>
                                             <th>Factura</th>
+                                            <th>Importe total</th>
                                         </thead>
                                         <tbody>     
                                             <!--si no hay productos mostrar-->
@@ -101,7 +84,8 @@
                                             <!--vista-->                                   
                                             <tr v-for="notaCredito in notasCredito">
                                                 <td>  NE0001-0000{{notaCredito.id}}</td>
-                                                <td>FE{{notaCredito.idFactura}}</td>
+                                                <td>FE{{notaCredito.factura.codigo}}</td>
+                                                <td>S/.-{{notaCredito.factura.total}}</td>
                                              </tr>
                                         </tbody>
                                     </table>
@@ -160,7 +144,7 @@
                                            .then((facturas)=>{
                                                 console.log(facturas);
                                                                                                                                                                                                                             
-                                                
+                                                                    
                                             
                                                 ClienteService.get()
                                                          .then((clientes)=>{
@@ -177,19 +161,48 @@
                                                         EstadoService.get('factura')
                                                                      .then((estadosTabla)=>{
                                                                             for(var i in facturas){                
-                                                                                facturas[i].tipo="facturas";                                                   
+                                                                                facturas[i].tipo="facturas";
+                                                                                if(!facturas[i].anulado)
+                                                                                facturas[i].anulado=false;
                                                                                 for(var ii in estadosTabla){
                                                                                     if(estadosTabla[ii].id==facturas[i].estadoId){
                                                                                         facturas[i].estado=estadosTabla[ii].estado.descripcion;
                                                                                         break;
                                                                                     }
                                                                                 }
+
                                                                                 this.ventas.push(facturas[i]);
                                                                             }
                                                         });
 
                                                 });
 
+
+
+                                               //notas de crédito
+                                                 $.ajax({url:'/notas-credito',
+                                                        method:'get',
+                                                        success:(resp)=>{
+                                                            if(resp.error==0){
+                                                                let notasCredito=resp.data;
+                                                                for(var i in notasCredito){
+                                                                    notasCredito[i].anulado=false;
+                                                                    for(var ii in facturas){
+                                                                        if(facturas[ii].id==notasCredito[i].idFactura){
+                                                                            notasCredito[i].factura=facturas[ii];
+                                                                            facturas[i].anulado=true;
+                                                                            console.log('anulado: '+facturas[i].anulado);
+                                                                            break;
+                                                                        }                       
+                                                                    }
+                                                                }
+
+                                                                this.notasCredito=notasCredito;
+                                                                
+                                                            }
+
+                                                        }
+                                                });
 
 
                                             });
@@ -222,13 +235,7 @@
                                                 });
                                                 
                                             });
-                            //notas de crédito
-                             $.ajax({url:'/notas-credito',
-                                    method:'get',
-                                    success:(resp)=>{
-                                        if(resp.error==0)
-                                            this.notasCredito=resp.data;
-                                    }});
+
                         }, //métodos
                         methods:{
                             onVentasGetListener:function (ventas){

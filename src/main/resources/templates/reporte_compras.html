@@ -29,25 +29,7 @@
                                            title="Agregar orden de compra">
                                               <i class="material-icons">note_add</i>
                                         </a>
-                                        <!--búsqueda-->
-                                        <div class="navbar-form navbar-right" role="search">
-    			                            <!--texto a buscar-->
-                                            <div class="form-group  is-empty">
-    			                                <input type="text" class="form-control" placeholder="Buscar" v-model="busqueda.valor">
-    			                                <span class="material-input"></span>
-    			                            </div>
-                                            <!--filtro-->
-                                            <div class="form-group label-floating">       
-                                              <select id="cmb-filtros" class="form-control" v-model="busqueda.filtroSeleccionadoId">
-                                                  <option v-for="filtro in busqueda.filtros"  v-bind:value="filtro.id">{{filtro.nombre}}</option>
-                                              </select>
-                                            </div>
-                                            <!--botón-->
-    			                            <button @click="buscarOrdenCompra" class="btn btn-white btn-round btn-just-icon">
-    			                                <i class="material-icons">search</i>
-    			                                <div class="ripple-container"></div>
-    			                            </button>
-    			                        </div>
+                                        
                                     </div>
 
                                     <!--lista de ordenCompras en tabla-->

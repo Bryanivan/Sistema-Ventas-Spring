@@ -16,7 +16,7 @@
                         <div class="col-md-12">
                             <div class="card ordenCompras">
                                 <div class="card-header" data-background-color="purple">
-                                    <h4 class="title">Generar factura (o nota de venta)</h4>
+                                    <h4 class="title">Generar venta</h4>
                                 </div>
                                 <div  id="factura" class="card-content table-responsive">
                                     <form>
@@ -154,7 +154,7 @@
                                                 <div class="col-md-2">
                                                       <div class="form-group">
                                                           <label class="control-label">Cantidad</label>
-                                                          <input type="number" class="form-control"  v-model="producto.cantidad" placeholder="0" />
+                                                          <input type="number" class="form-control"  v-model="producto.cantidad" placeholder="0" min="0" v-bind:max="producto.stock"/>
                                                       </div>
                                                 </div>
                                             </div>
@@ -350,7 +350,7 @@
                                            .then((index)=>{
                                               indiceTexto=(index+1)+"";
                                               prefix='00000';//prefijo
-                                              this.factura.codigo='FE0001-'+(prefix.substr(0,6-indiceTexto.length)+indiceTexto);
+                                              this.factura.codigo='0001-'+(prefix.substr(0,6-indiceTexto.length)+indiceTexto);
                                            });
 
                              NotaVentaService.getLastRowIndex()

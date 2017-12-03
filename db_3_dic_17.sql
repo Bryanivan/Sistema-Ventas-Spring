@@ -57,7 +57,7 @@ CREATE TABLE `clientes` (
   `emailclie` varchar(60) DEFAULT NULL,
   `estadostablas_idestadostabla` int(11) DEFAULT NULL,
   PRIMARY KEY (`idclie`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,7 +66,7 @@ CREATE TABLE `clientes` (
 
 LOCK TABLES `clientes` WRITE;
 /*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
-INSERT INTO `clientes` VALUES (1,'76935184','Carlos Chavez Laguna','por ahí','por aca','948110940','carloscl94r@gmail.com',7),(2,'123456','Jair Tarazona','aquí','debajo de mi pantalón','3252562','tarazona.jair@cucardas.com',6);
+INSERT INTO `clientes` VALUES (1,'73223177','Giancarlo Chinchay Guerrero','Av. Universitaria 6227 Villa Sol Los Olivos','Av. Alfredo Mendiola 1200 Villa Sol Los Olivos','948110940','giachigue95@gmail.com',6),(2,'71217915','Jair Tarazona','Av. La Costanera 345 Chorrillos','Jr. De la Union 126 Lima','3252562','tarazona.jair@gmail.com',6),(3,'72398840','Juan Carlos Cuba','Calle 124 lote 17, Los Olivos de pro.','Calle 124 lote 17, Los Olivos de pro.','987485784','juan.carlos.cuba@gmail.com',7);
 /*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -102,14 +102,15 @@ DROP TABLE IF EXISTS `detallefactura`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `detallefactura` (
-  `productos_idprod` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `productos_idprod` int(11) DEFAULT NULL,
   `cantidaddetf` varchar(45) DEFAULT NULL,
   `descuentodetf` varchar(45) DEFAULT NULL,
   `importedetf` varchar(45) DEFAULT NULL,
   `notaventas_idnotadeventa` int(11) DEFAULT NULL,
   `factura_idfactura` int(11) DEFAULT NULL,
-  PRIMARY KEY (`productos_idprod`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -118,6 +119,7 @@ CREATE TABLE `detallefactura` (
 
 LOCK TABLES `detallefactura` WRITE;
 /*!40000 ALTER TABLE `detallefactura` DISABLE KEYS */;
+INSERT INTO `detallefactura` VALUES (1,1,'70',NULL,'12.5',0,2),(2,2,'16',NULL,'14.7',0,2),(3,3,'24',NULL,'10.5',1,0),(4,4,'35',NULL,'13.7',0,2),(5,5,'200',NULL,'5.8',0,1);
 /*!40000 ALTER TABLE `detallefactura` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,12 +131,13 @@ DROP TABLE IF EXISTS `detalleordencompras`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `detalleordencompras` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `productos_idprod` int(11) NOT NULL,
   `ordencompras_idordendecompra` int(11) NOT NULL,
   `cantidaddeoc` varchar(45) NOT NULL,
   `preciocompradeoc` varchar(45) NOT NULL,
-  PRIMARY KEY (`productos_idprod`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,6 +146,7 @@ CREATE TABLE `detalleordencompras` (
 
 LOCK TABLES `detalleordencompras` WRITE;
 /*!40000 ALTER TABLE `detalleordencompras` DISABLE KEYS */;
+INSERT INTO `detalleordencompras` VALUES (1,4,1,'1300','13.0'),(2,5,1,'500','5.2');
 /*!40000 ALTER TABLE `detalleordencompras` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -156,16 +160,17 @@ DROP TABLE IF EXISTS `empleados`;
 CREATE TABLE `empleados` (
   `idempl` int(11) NOT NULL AUTO_INCREMENT,
   `nombreempl` varchar(60) NOT NULL,
-  `apellidopaternoempl` varchar(45) NOT NULL,
-  `apellidomaternoempl` varchar(45) DEFAULT NULL,
-  `dniempl` char(8) NOT NULL,
+  `apellidopaternoempl` varchar(60) DEFAULT NULL,
+  `apellidomaternoempl` varchar(60) DEFAULT NULL,
+  `dniempl` char(8) DEFAULT NULL,
   `sueldoempl` decimal(10,2) DEFAULT NULL,
   `telefonoempl` varchar(45) DEFAULT NULL,
   `tipoempleados_idtipe` int(11) NOT NULL,
   `user_iduser` int(11) NOT NULL,
   `estadostablas_idestadostabla` int(11) NOT NULL,
+  `fotourl` text,
   PRIMARY KEY (`idempl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,6 +179,7 @@ CREATE TABLE `empleados` (
 
 LOCK TABLES `empleados` WRITE;
 /*!40000 ALTER TABLE `empleados` DISABLE KEYS */;
+INSERT INTO `empleados` VALUES (1,'Carlos Chávez',NULL,NULL,NULL,0.00,NULL,1,1,8,'https://lh6.googleusercontent.com/-7iLNLvSUMbU/AAAAAAAAAAI/AAAAAAAAABw/A5PchCOn0j8/photo.jpg'),(2,'Code GameX',NULL,NULL,NULL,0.00,NULL,2,2,8,'https://lh5.googleusercontent.com/-ygIzjaKjUrY/AAAAAAAAAAI/AAAAAAAAAJ8/m5rFrS-6f_g/photo.jpg');
 /*!40000 ALTER TABLE `empleados` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -210,7 +216,7 @@ DROP TABLE IF EXISTS `factura`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `factura` (
-  `idfactura` int(11) NOT NULL,
+  `idfactura` int(11) NOT NULL AUTO_INCREMENT,
   `numerofact` char(11) NOT NULL,
   `fechaemisionfact` datetime NOT NULL,
   `fechavencimientofact` datetime DEFAULT NULL,
@@ -224,7 +230,7 @@ CREATE TABLE `factura` (
   `estadostablas_idestadostabla` int(11) NOT NULL,
   `clientes_idclie` int(11) NOT NULL,
   PRIMARY KEY (`idfactura`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -233,6 +239,7 @@ CREATE TABLE `factura` (
 
 LOCK TABLES `factura` WRITE;
 /*!40000 ALTER TABLE `factura` DISABLE KEYS */;
+INSERT INTO `factura` VALUES (1,'0001-000001','2017-11-30 00:00:00','2017-11-30 00:00:00',1514.00,0.00,272.52,1786.52,1,2,NULL,10,1),(2,'0001-000002','2017-11-30 00:00:00','2017-11-30 00:00:00',1589.70,0.00,286.15,1875.85,1,3,NULL,10,3);
 /*!40000 ALTER TABLE `factura` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -314,6 +321,33 @@ LOCK TABLES `movilidad` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `notascreditos`
+--
+
+DROP TABLE IF EXISTS `notascreditos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notascreditos` (
+  `idnotacreditos` int(11) NOT NULL AUTO_INCREMENT,
+  `factura_idfactura` int(11) DEFAULT NULL,
+  `monto` decimal(10,2) DEFAULT NULL,
+  `estadostablas_idestadostabla` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idnotacreditos`),
+  UNIQUE KEY `factura_idfactura_UNIQUE` (`factura_idfactura`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notascreditos`
+--
+
+LOCK TABLES `notascreditos` WRITE;
+/*!40000 ALTER TABLE `notascreditos` DISABLE KEYS */;
+INSERT INTO `notascreditos` VALUES (1,2,NULL,NULL);
+/*!40000 ALTER TABLE `notascreditos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `notaventas`
 --
 
@@ -329,8 +363,9 @@ CREATE TABLE `notaventas` (
   `totalnotv` decimal(10,2) DEFAULT NULL,
   `plazopago_idplazopago` int(11) NOT NULL,
   `clientes_idclie` int(11) NOT NULL,
+  `estadostablas_idestadostabla` int(11) NOT NULL,
   PRIMARY KEY (`idnotadeventa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -339,6 +374,7 @@ CREATE TABLE `notaventas` (
 
 LOCK TABLES `notaventas` WRITE;
 /*!40000 ALTER TABLE `notaventas` DISABLE KEYS */;
+INSERT INTO `notaventas` VALUES (1,'2017-11-30 00:00:00',252.00,0.00,45.36,297.36,1,2,0);
 /*!40000 ALTER TABLE `notaventas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -351,14 +387,14 @@ DROP TABLE IF EXISTS `ordencompras`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ordencompras` (
   `idordendecompra` int(11) NOT NULL AUTO_INCREMENT,
-  `numeroguiaordc` varchar(45) NOT NULL,
+  `numeroguiaordc` varchar(45) DEFAULT NULL,
   `proveedor_idprov` int(11) NOT NULL,
   `subtotalordc` decimal(10,2) NOT NULL,
   `igvordc` decimal(10,2) NOT NULL,
   `totalordc` decimal(10,2) NOT NULL,
   `fechaordc` datetime NOT NULL,
   PRIMARY KEY (`idordendecompra`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -367,6 +403,7 @@ CREATE TABLE `ordencompras` (
 
 LOCK TABLES `ordencompras` WRITE;
 /*!40000 ALTER TABLE `ordencompras` DISABLE KEYS */;
+INSERT INTO `ordencompras` VALUES (1,NULL,1,19500.00,3510.00,23010.00,'2017-11-30 00:00:00');
 /*!40000 ALTER TABLE `ordencompras` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -421,7 +458,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (1,'comida de perro dog chow',550.00,60.55,600.00,1000.00,300,3,NULL),(2,'Detergente',1.50,2.50,20.00,30.00,100,3,NULL),(3,'Cerveza pilsen callao',1.50,55.00,20.00,300.00,1000,5,NULL),(4,'arduino',20.00,45.00,150.00,300.00,200,3,NULL),(5,'chinuino',20.00,30.00,60.00,120.00,1,3,NULL);
+INSERT INTO `productos` VALUES (1,'ESCOBA ESCOBON',12.00,12.30,12.40,12.50,1910,3,NULL),(2,'ESCOBA ESCOBESTIA',14.00,14.50,14.60,14.70,984,3,NULL),(3,'LAVATODO HUDE',10.00,10.50,10.60,10.70,954,3,NULL),(4,'VENENO KILLER',13.00,13.50,13.60,13.70,1465,3,NULL),(5,'INSECTICIDA SECRETO DE LA ABUELA',5.20,5.70,5.80,5.90,1000,3,NULL);
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -440,7 +477,7 @@ CREATE TABLE `proveedor` (
   `telefonoprov` varchar(12) DEFAULT NULL,
   `estadostablas_idestadostabla` int(11) DEFAULT NULL,
   PRIMARY KEY (`idprov`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -449,7 +486,7 @@ CREATE TABLE `proveedor` (
 
 LOCK TABLES `proveedor` WRITE;
 /*!40000 ALTER TABLE `proveedor` DISABLE KEYS */;
-INSERT INTO `proveedor` VALUES (1,'Pet Society','123454321','contacto@petsociety.com','95112399',1),(2,'Cucardas','98875123','contacto@cucardas.com','91231239',1);
+INSERT INTO `proveedor` VALUES (1,'CORPORACION ALTIPLANO S.A.','20394857471','contacto@altiplano.com.pe','95112399',1),(2,'SOLARIS S.A.','98875123','contacto@solaris.com','91231239',1),(3,'HUDE S.A.C.','20493817121','ventas.hude@hude.com.pe','5348976',1);
 /*!40000 ALTER TABLE `proveedor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -463,9 +500,9 @@ DROP TABLE IF EXISTS `roles`;
 CREATE TABLE `roles` (
   `idroles` int(11) NOT NULL AUTO_INCREMENT,
   `descripcionrole` varchar(45) NOT NULL,
-  `pesta├▒asrole` text,
+  `modulos` text,
   PRIMARY KEY (`idroles`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -474,6 +511,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
+INSERT INTO `roles` VALUES (1,'Administrador de sistema','all'),(2,'Jefe de ventas','productos-clientes-ventas'),(3,'Almacenero','productos-proveedores-compras');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -514,7 +552,7 @@ CREATE TABLE `tipoempleados` (
   `idtipe` int(11) NOT NULL AUTO_INCREMENT,
   `descripciontipe` varchar(45) NOT NULL,
   PRIMARY KEY (`idtipe`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -523,7 +561,7 @@ CREATE TABLE `tipoempleados` (
 
 LOCK TABLES `tipoempleados` WRITE;
 /*!40000 ALTER TABLE `tipoempleados` DISABLE KEYS */;
-INSERT INTO `tipoempleados` VALUES (1,'administrador'),(2,'vendedor'),(3,'supervisor'),(4,'almacenero');
+INSERT INTO `tipoempleados` VALUES (1,'Administrador de sistema'),(2,'Jefe de ventas'),(3,'Almacenero');
 /*!40000 ALTER TABLE `tipoempleados` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -583,12 +621,12 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `iduser` int(11) NOT NULL AUTO_INCREMENT,
   `usuariouser` varchar(45) NOT NULL,
-  `passworduser` varchar(45) NOT NULL,
+  `passworduser` varchar(45) DEFAULT NULL,
   `roles_idroles` int(11) DEFAULT NULL,
-  `auth_token` varchar(128) DEFAULT NULL,
-  `remember_token` varchar(128) DEFAULT NULL,
+  `auth_token` text,
+  `remember_token` text,
   PRIMARY KEY (`iduser`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -597,7 +635,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (2,'admin','admin',NULL,NULL,NULL),(3,'carlos','12345',NULL,NULL,NULL);
+INSERT INTO `user` VALUES (1,'carloscl94r@gmail.com',NULL,1,'ya29.GlwXBQoXtn9G-HMQ1Nm51dybFe1tJCfuJIJLg370262f8zaHROhnBLQQuTceZME51PSXRLLGjCmlX0SKfLCXF3IY8XtsU1jdvcUH_vKbFb_uxl9-1-r-dfXV8lAdIw','AEoYo8uk45la4L06Y8B7Y7n50rlfP9SHs6fEt9SlrUEulDV4hTTo8AuOJlc5himqhwQqk_h3e7XQQQrp_SGomHJDX8dxg5SLRyfWW9l0QN0z6QcCwew9BwhO-grCRIwm9OevcalABPHnVjkOGP7XNd03EvUeSOZVl9Xt-jl4bRh8O9yqasD8bfdQJguhC_He-6cS6KwNgt9-QvZrnP8RAI7B7JTTdeBVH9Lu5KIxvaLVXsFVgQ8z5bX7kGtt9qQFD3mnJ0AgLqElUbq16BCCRBic_4ScvEbIUVv05_6CoTQWk9hY0dBheBCGmSMQ_6qtit62hskiDBg8iZtV2ihH9B5ONPxgS6aAnyV1txOldwLRW2dD9p6POxUrIpIc7uQdRurwA5u7lPGf'),(2,'computerguyhunter94@gmail.com',NULL,2,'ya29.GlsXBdasyLJLFYt0wTcQne9Q8FhiZlE_PJud9k2JmWX1qOZAgRtTO0u5XzZ_Tg1nEvHjCB0Zv1p0AYEcTFOctJDRdzMQNNgcW2Y1K6BLRgbvYbZSB5CmpCRY0lPV','AEoYo8vGaFBVJsenqDia62XriOdI8u-wk5sGPxqG2yDIKMm7J7EthTq0lGaOU2drH3uzPPmQVpwXiYREp1HoMSc-mcvqwKH1rX0cYqKtIs0n64Cz3-CMffBE3m_C3AL6TI494icg0b7y8VEY7GniAMmJFpcXHHtC-ZH3i93cDKJkstC_ib18smIc_H8HES-q7tMJsbf-qhA7awk8lgxE9ORJk9Aiam3wHTXmNJi0lNKaqO8HOc5_PUyhjmW2NBW6ewucjKkVU3zFKB90hAdDSacvqa6lR0PYx8VLc9yG8aXf4Ii4LzvhN2Lyo43Z4pIHhpGIdRiQz2Kzzvpp9hFnoB64dfbthLvHGgzP0MZlv2w2ncPUFFjFlTgZ37Zh_odwgnEU2tdEREnv');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -610,4 +648,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-28 13:03:05
+-- Dump completed on 2017-12-03 12:39:15
