@@ -8,7 +8,7 @@ class DetalleCompraService{
 	static get(idCompra){
 		return new Promise((resolve)=>{
 
-		  	if(detalleCompras.length==0)
+		  	
 		        $.ajax({
 		          url:`/ordenes-compra/${idCompra}/detalle`,
 		          method:'get',
@@ -20,8 +20,7 @@ class DetalleCompraService{
 		            }
 		          }
 		        });
-		    else
-		    	resolve(detalleCompras);
+		    
 
 		});
 	}

@@ -10,7 +10,7 @@
 
         <div class="main-panel">
             <nav th:include="fragments/navbar :: navbar" class="navbar navbar-transparent navbar-absolute"></nav>
-            <div class="content">
+            <div class="content"   id="lista-ventas">
                 <div class="container-fluid">
                     <div class="row">                        
                         <div class="col-md-12">
@@ -19,7 +19,7 @@
                                     <h4 class="title">Ventas</h4>
                                     <p class="category">Listado de facturas</p>
                                 </div>
-                                <div  id="lista-ventas" class="card-content table-responsive">
+                                <div class="card-content table-responsive">
                                 	<!--botón agregar nuevo-->
                                     <div class="row col-md-12">             
                                         <a id="btn-agregar-venta" 
@@ -56,18 +56,52 @@
                                             <th>Cliente</th>
                                             <th>Total</th>
                                             <th>Fecha</th>
-                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </thead>
-                                        <tbody>      
+                                        <tbody>     
+                                            <!--si no hay productos mostrar-->
+                                            <tr v-if="ventas.length==0"><td colspan="6" textAlign="center">Lista Vacía</td></tr>
                                             <!--vista-->                                   
                                             <tr v-for="venta in ventas">
-                                                <td>N°{{(venta.tipo=='facturas'? venta.codigo : venta.id )}}</td>
-                                                <td>{{venta.clienteId}}</td>
+                                                <td>  {{(venta.tipo=='facturas'? 'FE'+venta.codigo : 'N°'+venta.id )}}</td>
+                                                <td>{{venta.cliente.nombreCompleto}}</td>
                                                 <td class="text-primary">S/. {{venta.total}}</td>
-                                                <td>{{venta.fechaEmision}}</td>
-                                                <td>{{venta.estado}}</td>
-                                                <td><a @click="editarVenta(venta)" href="#editar-venta"><i class="material-icons">border_color</i></a></td>
+                                                <td>{{venta.fechaEmision}}</td>                 
+                                                <td>
+                                                    <a @click="verVenta(venta)" href="#ver-ordenCompra"><i class="material-icons">visibility</i></a>
+                                                    <button @click="anularFactura(venta)" v-if="venta.codigo!=undefined" class="btn btn-default">Anular</button>
+                                                    
+                                                </td>
+                                             </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br><br>
+                    <div class="row">                        
+                        <div class="col-md-12">
+                            <div class="card ventas">
+                                <div class="card-header" data-background-color="purple">
+                                    <h4 class="title">Nota Crédito</h4>
+                                    <p class="category">Listado de notas de crédito</p>
+                                </div>
+                                <div  id="lista-nota-credito" class="card-content table-responsive">
+                                    <!--lista de ventas en tabla-->
+                                    <table class="table lista">
+                                        <thead class="text-primary">
+                                            <th>Código</th>
+                                            <th>Factura</th>
+                                        </thead>
+                                        <tbody>     
+                                            <!--si no hay productos mostrar-->
+                                            <tr v-if="notasCredito.length==0"><td colspan="6" textAlign="center">Lista Vacía</td></tr>
+                                            <!--vista-->                                   
+                                            <tr v-for="notaCredito in notasCredito">
+                                                <td>  NE0001-0000{{notaCredito.id}}</td>
+                                                <td>FE{{notaCredito.idFactura}}</td>
                                              </tr>
                                         </tbody>
                                     </table>
@@ -86,16 +120,18 @@
     <!--dependencias JS-->
     <div th:replace="fragments/footer_dependencies :: dependencies (pageType='system')"></div> 
     <!--<div th:replace="fragments/mantener_venta :: mantener-venta"></div> -->
-
-    <!--obtener servicio de venta-->
+    <div th:replace="fragments/ver_venta :: ver-venta"></div>
+    <div th:replace="fragments/agregar_nota_credito :: agregar-nota-credito"></div>
+    <!--obtener servicio de venta
     <script th:src="@{/app/facturaService.js}"></script>
-    <script th:src="@{/app/notaVentaService.js}"></script>
+    <script th:src="@{/app/notaVentaService.js}"></script>-->
 
     <script type="text/javascript">        
         $(document).ready(function() {
                     //modelo
                     var data={
                         ventas:[],
+                        notasCredito:[],
                         busqueda:{
                             valor:'',
                             filtroSeleccionadoId:1,
@@ -124,46 +160,75 @@
                                            .then((facturas)=>{
                                                 console.log(facturas);
                                                                                                                                                                                                                             
-                                                //obtener los estados de los ventas
-                                                EstadoService.get('factura')
-                                                             .then((estadosTabla)=>{
-                                                                    for(var i in facturas){                
-                                                                        facturas[i].tipo="facturas";                    
-                                                                        for(var ii in estadosTabla){
-                                                                            if(estadosTabla[ii].id==facturas[i].estadoId){
-                                                                                facturas[i].estado=estadosTabla[ii].estado.descripcion;
-                                                                                break;
-                                                                            }
-                                                                        }
-                                                                        this.ventas.push(facturas[i]);
-                                                                    }
-                                                });
-                                            
                                                 
+                                            
+                                                ClienteService.get()
+                                                         .then((clientes)=>{
+                                                                console.log(clientes);
+                                                                
+                                                                for(var i in facturas)
+                                                                    for(var ii in clientes)
+                                                                        if(facturas[i].clienteId==clientes[ii].id){
+                                                                            facturas[i].cliente=clientes[ii];
+                                                                        }
+
+
+                                                        //obtener los estados de los ventas
+                                                        EstadoService.get('factura')
+                                                                     .then((estadosTabla)=>{
+                                                                            for(var i in facturas){                
+                                                                                facturas[i].tipo="facturas";                                                   
+                                                                                for(var ii in estadosTabla){
+                                                                                    if(estadosTabla[ii].id==facturas[i].estadoId){
+                                                                                        facturas[i].estado=estadosTabla[ii].estado.descripcion;
+                                                                                        break;
+                                                                                    }
+                                                                                }
+                                                                                this.ventas.push(facturas[i]);
+                                                                            }
+                                                        });
+
+                                                });
+
+
+
                                             });
+
+                                           
 
                             NotaVentaService.get()
                                            .then((notaVentas)=>{
                                                 console.log(notaVentas);
-                                                                                                                                                                                                                            
-                                                //obtener los estados de los ventas
-                                                EstadoService.get('factura')
-                                                             .then((estadosTabla)=>{
-                                                                    for(var i in notaVentas){
-                                                                        notaVentas[i].tipo="notas-venta";
-                                                                        for(var ii in estadosTabla){
-                                                                            if(estadosTabla[ii].id==notaVentas[i].estadoId){
-                                                                                notaVentas[i].estado=estadosTabla[ii].estado.descripcion;
-                                                                                break;
-                                                                            }
+                                                 
+
+                                                 ClienteService.get()
+                                                         .then((clientes)=>{
+                                                            console.log('.......');
+                                                                console.log(clientes);
+                                                                
+                                                                for(var i in notaVentas){
+
+                                                                    for(var ii in clientes){
+                                                                        if(notaVentas[i].clienteId==clientes[ii].id){
+                                                                            console.log('hola');
+                                                                            notaVentas[i].cliente=clientes[ii];
                                                                         }
-                                                                        this.ventas.push(notaVentas[i]);
+                                                                        
                                                                     }
-                                                });
+                                                                }
+                                                                                                                                                   
+                                                        this.ventas.push(notaVentas[i]);
                                             
+                                                });
                                                 
                                             });
-
+                            //notas de crédito
+                             $.ajax({url:'/notas-credito',
+                                    method:'get',
+                                    success:(resp)=>{
+                                        if(resp.error==0)
+                                            this.notasCredito=resp.data;
+                                    }});
                         }, //métodos
                         methods:{
                             onVentasGetListener:function (ventas){
@@ -210,9 +275,18 @@
                                     VentaService.buscar('','')
                                                    .then(this.onVentasGetListener);
                                 */
+                            },
+                            verVenta:function(venta){
+                                verVenta.show(venta);
+                            },
+                            anularFactura:function(venta){
+                                agregarNotaCredito.show(venta);
+
                             }
                         }
                     });
+
+                   
         });
     </script>
 

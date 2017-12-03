@@ -296,7 +296,8 @@
                             //método recursivo
                             registrarDetalleCompra:function (){
                               
-                              if(this.productos.length>0)
+                              if(this.productos.length>0){
+                                this.productos[0].productoId=this.productos[0].id;
                                 DetalleCompraService.save(this.productos[0],this.compraId)
                                                    .then((resp)=>{
                                                       if(resp.error==0){
@@ -306,6 +307,7 @@
                                                       else
                                                         modal('Generar OrdenCompra',resp.message);
                                                    });
+                              }
                               else //umbral, redireccionar
                                   window.location="./reporte_compras";
                             },

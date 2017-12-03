@@ -350,12 +350,12 @@
                                            .then((index)=>{
                                               indiceTexto=(index+1)+"";
                                               prefix='00000';//prefijo
-                                              this.factura.codigo='0001-'+(prefix.substr(0,6-indiceTexto.length)+indiceTexto);
+                                              this.factura.codigo='FE0001-'+(prefix.substr(0,6-indiceTexto.length)+indiceTexto);
                                            });
 
                              NotaVentaService.getLastRowIndex()
                                              .then((index)=>{
-                                                this.notaVentaId=index;
+                                                this.notaVentaId=index+1;
                                              });
 
                             //setear las fechas por defecto
@@ -375,7 +375,7 @@
                         },
                         computed:{
                           codigoVenta: function(){
-                              return 'N°'+(this.tipoVenta=='facturas'?this.factura.codigo:this.notaVentaId);
+                              return (this.tipoVenta=='facturas'?'FE'+this.factura.codigo:'N°'+this.notaVentaId);
                           }
                         },
                         methods:{
@@ -403,7 +403,9 @@
                             },
                             //método recursivo
                             registrarDetalleVenta:function (){
-                              if(this.productos.length>0)
+                              if(this.productos.length>0){
+                                this.productos[0].productoId=this.productos[0].id;
+                                this.productos[0].precio=this.productos[0].precioVentaFinal;
                                 DetalleVentaService.save(this.productos[0],this.tipoVenta,this.ventaId)
                                                    .then((resp)=>{
                                                       if(resp.error==0){
@@ -413,6 +415,7 @@
                                                       else
                                                         modal('Generar Factura',resp.message);
                                                    });
+                              }
                               else //umbral, redireccionar
                                   window.location="./reporte_ventas"
                             },

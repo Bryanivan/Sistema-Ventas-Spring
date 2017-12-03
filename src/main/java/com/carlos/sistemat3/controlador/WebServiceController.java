@@ -35,6 +35,7 @@ import com.carlos.sistemat3.entidad.DetalleVenta;
 import com.carlos.sistemat3.entidad.OrdenCompra;
 import com.carlos.sistemat3.entidad.DetalleCompra;
 import com.carlos.sistemat3.entidad.Rol;
+import com.carlos.sistemat3.entidad.NotaCredito;
 import com.carlos.sistemat3.servicio.UsuarioServicio;
 import com.carlos.sistemat3.servicio.RolServicio;
 import com.carlos.sistemat3.servicio.ClienteServicio;
@@ -48,6 +49,7 @@ import com.carlos.sistemat3.servicio.NotaVentaServicio;
 import com.carlos.sistemat3.servicio.DetalleVentaServicio;
 import com.carlos.sistemat3.servicio.OrdenCompraServicio;
 import com.carlos.sistemat3.servicio.DetalleCompraServicio;
+import com.carlos.sistemat3.servicio.NotaCreditoServicio;
 
 @RestController
 public class WebServiceController {
@@ -113,6 +115,9 @@ public class WebServiceController {
 	@Qualifier("detalleCompraServicio")
 	private DetalleCompraServicio detalleCompraServicio;
 	
+	@Autowired
+	@Qualifier("notaCreditoServicio")
+	private NotaCreditoServicio notaCreditoServicio;
 	
 	/*Api Usuarios*/
 	
@@ -556,10 +561,29 @@ public class WebServiceController {
 	@PostMapping("/facturas/{facturaId}/detalle")
 	public Response addFacturaDetalle(@PathVariable("facturaId")int facturaId,@RequestBody DetalleVenta detalleVenta) {
 		detalleVenta.setFacturaId(facturaId);
+
+		//vamos a restarle el stock
+		Producto producto=productoServicio.findById(detalleVenta.getProductoId()).get(0);
+		producto.setStock(producto.getStock()-detalleVenta.getCantidad());
+		productoServicio.update(producto);
+		
+		//registrar detalle venta
 		DetalleVenta detalleVentaResultante=detalleVentaServicio.add(detalleVenta);
 		List<Identificador> identificadores=new ArrayList<>();
 		identificadores.add(new Identificador(detalleVentaResultante.getId()));
 		return new Response<Identificador>(Response.STATUS_OK,"El detalle venta se ha agregado con en el nota venta éxito",identificadores);
+	}
+	
+	/*Api nota de crédito*/
+	@GetMapping("/notas-credito")
+	public Response addNotaCredito() {		
+		return new Response<>(Response.STATUS_OK,notaCreditoServicio.all());		
+	}
+	
+	@PostMapping("/notas-credito")
+	public Response addNotaCredito(@RequestParam(value="facturaId",defaultValue="-1")int facturaId) {
+		notaCreditoServicio.add(new NotaCredito(facturaId));
+		return new Response<>(Response.STATUS_OK,"La nota de crédito se ha agregado con en el nota venta éxito");		
 	}
 	
 	/*Api nota de venta*/
@@ -623,7 +647,7 @@ public class WebServiceController {
 	 * @return listado de detalle de nota de venta
 	 * */
 	@GetMapping("/notas-venta/{notaVentaId}/detalle")
-	public Response getNotaVentaDetalle(@PathVariable("notaId")int notaVentaId) {				
+	public Response getNotaVentaDetalle(@PathVariable("notaVentaId")int notaVentaId) {				
 		return new Response<DetalleVenta>(Response.STATUS_OK,detalleVentaServicio.findByNotaVentasId(notaVentaId));
 	}
 	
@@ -638,9 +662,15 @@ public class WebServiceController {
 	 * */
 	//forzar a ser detalle para nota de venta
 	@PostMapping("/notas-venta/{notaVentaId}/detalle")
-	public Response addNotaVentaDetalle(@PathVariable("notaId")int notaVentaId,@RequestBody DetalleVenta detalleVenta) {
+	public Response addNotaVentaDetalle(@PathVariable("notaVentaId")int notaVentaId,@RequestBody DetalleVenta detalleVenta) {
 		detalleVenta.setNotaVentasId(notaVentaId);
 		DetalleVenta detalleVentaResultante=detalleVentaServicio.add(detalleVenta);
+		
+		//vamos a restarle el stock
+		Producto producto=productoServicio.findById(detalleVenta.getProductoId()).get(0);
+		producto.setStock(producto.getStock()-detalleVenta.getCantidad());
+		productoServicio.update(producto);
+		
 		List<Identificador> identificadores=new ArrayList<>();
 		identificadores.add(new Identificador(detalleVentaResultante.getId()));
 		return new Response<Identificador>(Response.STATUS_OK,"El detalle venta se ha agregado con en el nota venta éxito",identificadores);

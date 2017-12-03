@@ -1,50 +1,50 @@
-<!--Ver proveedor-->
-<div th:fragment="ver-orden-compra">
+<!--Ver cliente-->
+<div th:fragment="ver-venta">
 
-  <div id="ver-orden-compra" class="modal fade" tabindex="-1" role="dialog">
+  <div id="ver-venta" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog  modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Ver orden de compra</h4>
+          <h4 class="modal-title">Ver Factura o Nota Venta</h4>
         </div>
         <div class="modal-body">                        
-                <div  id="ordenCompra" class="card-content table-responsive">
+                <div  id="factura" class="card-content table-responsive">
                     <form>
 
-                        <!--formulario de proveedor-->
+                        <!--formulario de cliente-->
                         <fieldset>
                             <div class="row">
                                 <div class="col-md-6">
                                       <div class="form-group">
                                           <label class="control-label">Código N°</label>
-                                          <input type="text" class="form-control" disabled v-model="ordenCompra.id"/>
+                                          <input type="text" class="form-control" disabled v-model="factura.id"/>
                                       </div>
                                 </div>
                                 <div class="col-md-6">
                                       <div class="form-group">
                                           <label class="control-label">Fecha</label>
-                                          <input type="text" class="form-control" disabled v-model="ordenCompra.fecha"/>
+                                          <input type="text" class="form-control" disabled v-model="factura.fechaEmision"/>
                                       </div>
                                 </div>
                             </div>
                         </fieldset>
 
                         <fieldset>
-                            <h5 class="text-primary">Datos de Proveedor</h5>
+                            <h5 class="text-primary">Datos de Cliente</h5>
                             <div class="row">
                                 <div class="col-md-6">
                                       <div class="form-group">
                                           <label class="control-label">Nombre</label>
-                                          <input type="text" class="form-control" disabled v-model="ordenCompra.proveedor.razonSocial"/>
+                                          <input type="text" class="form-control" disabled v-model="factura.cliente.nombreCompleto"/>
                                       </div>
                                 </div>
                             </div>
                             <div class="row">                                                
                                 <div class="col-md-6 col-sm-12">
                                       <div class="form-group">
-                                          <label class="control-label">Ruc</label>
-                                          <textarea  v-model="ordenCompra.proveedor.ruc" class="form-control" disabled></textarea>
+                                          <label class="control-label">Ruc o DNI</label>
+                                          <textarea  v-model="factura.cliente.rucODni" class="form-control" disabled></textarea>
                                       </div>
                                 </div>
                             </div>
@@ -53,13 +53,13 @@
                                 <div class="col-md-6">
                                       <div class="form-group">
                                           <label class="control-label">Telefono</label>
-                                          <input type="text" class="form-control" disabled v-model="ordenCompra.proveedor.telefono"/>
+                                          <input type="text" class="form-control" disabled v-model="factura.cliente.telefono"/>
                                       </div>
                                 </div>
                                 <div class="col-md-6">
                                       <div class="form-group">
                                           <label class="control-label">Email</label>
-                                          <input type="text" class="form-control" disabled v-model="ordenCompra.proveedor.email"/>
+                                          <input type="text" class="form-control" disabled v-model="factura.cliente.email"/>
                                       </div>
                                 </div>
                             </div>
@@ -90,8 +90,8 @@
                                         <td>{{producto.productoId}}</td>
                                         <td class="text-primary">{{producto.descripcion}}</td>
                                         <td class="text-primary">{{producto.cantidad}}</td>
-                                        <td>S/.{{producto.precioCompra}}</td>
-                                        <td class="text-primary">S/. {{producto.precioCompra*producto.cantidad | currency}}</td>
+                                        <td>S/.{{producto.precio}}</td>
+                                        <td class="text-primary">S/. {{producto.precio*producto.cantidad | currency}}</td>
                                      </tr>
                                 </tbody>
                             </table>
@@ -103,21 +103,21 @@
                                 
                                         <div class="form-group">
                                             <label class="control-label">SubTotal
-                                              <input type="text" class="form-control"  disabled="" v-model="ordenCompra.subTotal"/>
+                                              <input type="text" class="form-control"  disabled="" v-model="factura.subTotal"/>
                                             </label>
                                         </div>
                                 
                                 
                                         <div class="form-group">
                                             <label class="control-label">IGV
-                                              <input type="text" class="form-control"  disabled="" v-model="ordenCompra.igv"/>
+                                              <input type="text" class="form-control"  disabled="" v-model="factura.igv"/>
                                             </label>
                                         </div>
 
                                 
                                         <div class="form-group">
                                             <label class="control-label">Total
-                                              <input type="text" class="form-control"  disabled="" v-model="ordenCompra.total" />
+                                              <input type="text" class="form-control"  disabled="" v-model="factura.total" />
                                             </label>
                                         </div>                                        
                                 </div>
@@ -137,25 +137,30 @@
   </div><!-- /.modal -->
 
   
-<!--obtener servicio de proveedor-->
-<script th:src="@{/app/ordenCompraService.js}"></script>
+<!--obtener servicio de cliente-->
+<script th:src="@{/app/facturaService.js}"></script>
+<script th:src="@{/app/notaVentaService.js}"></script>
 <script th:src="@{/app/productoService.js}"></script>
-<script th:src="@{/app/detalleCompraService.js}"></script>
+<script th:src="@{/app/detalleVentaService.js}"></script>
+<script th:src="@{/app/clienteService.js}"></script>
 
 <script type="text/javascript">
-                 //{"id":1,"productoId":0,"ordenCompraId":1,"cantidad":2,"precioCompra":0.0}
+                 //{"id":1,"productoId":0,"facturaId":1,"cantidad":2,"precio":0.0}
                  //VUE FILTROS
                   Vue.filter('currency', function (value) {
                       return parseFloat(value).toFixed(2);
                   });
                     //modelo
                     let data={
-                        ordenCompra:{ 
+                        factura:{ 
                           id:0,
-                          proveedorId:1,
-                          proveedor:{
-                            ruc:'',
-                            razonSocial:'',
+                          codigo:0,
+                          clienteId:1,
+                           cliente:{
+                            rucODni:'',
+                            nombreCompleto:'',
+                            direccionFiscal:'',
+                            direccionEntrega:'',
                             telefono:'',
                             email:'',
                             estadoId:0,
@@ -171,17 +176,17 @@
 
 
                     //vista-modelo
-                    var verOrdenCompra = new Vue({
-                        el: "#ver-orden-compra",
+                    var verVenta = new Vue({
+                        el: "#ver-venta",
                         data,
                         beforeCreate: function(){                            
 
                         }, //métodos
                         methods:{ 
                             //único que debe ser llamado fuera del ámbito
-                            show:function(ordenCompra){
-                              this.ordenCompra=ordenCompra;
-                              /*this.ordenCompra.proveedor={
+                            show:function(factura){
+                              this.factura=factura;
+                              /*this.factura.cliente={
                                 ruc:'',
                                 razonSocial:'',
                                 telefono:'',
@@ -190,11 +195,13 @@
                                 estado:'0',
                               };*/
                               this.productos=[];
-                              $('#ver-orden-compra .label-floating').removeClass('is-empty');
-                              $('#ver-orden-compra').modal('show');
-                              console.log(ordenCompra.id);
+                              $('#ver-venta .label-floating').removeClass('is-empty');
+                              $('#ver-venta').modal('show');
+                              console.log('.....');
+                              console.log('id:'+factura.id);
+                              console.log('codigo:'+factura.codigo);
                               $.ajax({
-                                url:`/ordenes-compra/${ordenCompra.id}/detalle`,
+                                url:((factura.codigo==undefined)?`/notas-venta/${factura.id}/detalle`:`/facturas/${factura.id}/detalle`),
                                 method:'get',
                                 success:(resp)=>{
                                   console.log(resp);
@@ -221,7 +228,7 @@
                             },
                             //ocultar
                             close:function(){
-                              $('#ver-orden-compra').modal('hide');
+                              $('#ver-venta').modal('hide');
                             }
                         }
                     });

@@ -1,0 +1,153 @@
+<div th:fragment="agregar-nota-credito">
+
+  <div id="agregar-notaCredito" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Agregar Nota credito</h4>
+        </div>
+        <div class="modal-body">
+                     <fieldset>
+                            <h5 class="text-primary">Factura</h5>
+                            <h4>Código: FE{{factura.codigo}}</h4>
+
+                            <!-- Listado de productos - detalle de orden compras -->
+                            <table class="table lista">
+                                <thead class="text-primary">
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Cantidad</th>
+                                    <th>Prec. Compra</th>
+                                    <th>SubTotal</th> 
+                                </thead>
+                                <tbody>      
+                                    
+
+                                    <!--si no hay productos mostrar-->
+                                    <tr v-if="productos.length==0"><td colspan="6" textAlign="center">Lista Vacía</td></tr>
+
+                                    <!--en otro caso, mostrar todos los productos-->
+                                    <tr v-for="(producto,index) in productos">
+                                        <td>{{producto.productoId}}</td>
+                                        <td class="text-primary">{{producto.descripcion}}</td>
+                                        <td class="text-primary">{{producto.cantidad}}</td>
+                                        <td>S/.{{producto.precio}}</td>
+                                        <td class="text-primary">S/. - {{producto.precio*producto.cantidad | currency}}</td>
+                                     </tr>
+                                </tbody>
+                            </table>
+                        </fieldset>
+
+                        <div class="row flex-column">
+                                <div class="col-md-3 flex-item-right">             
+                                        <div class="form-group">
+                                            <label class="control-label">Total (S/. -)
+                                              <input type="text" class="form-control"  disabled="" v-model="factura.total" />
+                                            </label>
+                                        </div>                                        
+                                </div>
+
+                        </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" @click="guardarNotaCredito" >Anular</button>
+          </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+
+  
+<!--obtener servicio de notaCredito
+    <script th:src="@{/app/notaCreditoService.js}"></script>-->
+
+    <script type="text/javascript">       
+                    //VUE FILTROS
+                    Vue.filter('currency', function (value) {
+                        return parseFloat(value).toFixed(2);
+                    }); 
+                    //vista-modelo
+                    var agregarNotaCredito = new Vue({
+                        el: "#agregar-notaCredito",
+                        data:{
+                        productos:[],
+                        factura:{ 
+                            id:0,
+                            codigo:0,
+                            clienteId:1,
+                            anulado:false,
+                             cliente:{
+                              rucODni:'',
+                              nombreCompleto:'',
+                              direccionFiscal:'',
+                              direccionEntrega:'',
+                              telefono:'',
+                              email:'',
+                              estadoId:0,
+                              estado:'0',
+                            },
+                            subTotal:0.0,
+                            igv:0.0,
+                            total:0.0,
+                            fecha:'2017-11-30',
+                          }
+                        },
+                        beforeCreate: function(){                                            
+
+                        }, //métodos
+                        methods:{                                                
+                            guardarNotaCredito: function(){  
+                                $.ajax({
+                                  url:'/notas-credito',
+                                  method:'post',
+                                  data:{
+                                    facturaId:this.factura.id
+                                  },
+                                  success:(resp)=>{
+                                      
+                                      window.location.href="./reporte_ventas";
+                                  }
+                                });
+                            },
+                            //único que debe ser llamado fuera del ámbito
+                            show: function(factura){
+                              this.notaCreditos=[];
+                              this.factura=factura;
+                              this.productos=[];
+
+                               $.ajax({
+                                url:`/facturas/${factura.id}/detalle`,
+                                method:'get',
+                                success:(resp)=>{
+                                  console.log(resp);
+                                  if(resp.error==0){
+                                        var productos=resp.data;
+                                         ProductoService.get()
+                                                        .then((res)=>{
+                                                            for(var i in res)
+                                                              for(var ii in productos)
+                                                                if(productos[ii].productoId==res[i].id){
+                                                                  productos[ii].descripcion=res[i].descripcion;
+                                                                }
+
+                                                            this.productos=productos;
+
+                                                        });
+                                  }
+                                }
+                              });
+
+
+                              $('#agregar-notaCredito .label-floating').removeClass('is-empty');
+                              $('#agregar-notaCredito').modal('show');
+                            },
+                            //ocultar
+                            close:function(){
+                              $('#agregar-notaCredito').modal('hide');
+                            }
+
+                        }
+                    });
+        
+    </script>
+
+</div><!-- /.modal -->
